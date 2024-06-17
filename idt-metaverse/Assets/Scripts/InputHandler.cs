@@ -2,15 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class InputHandler : MonoBehaviour
 {
-    [SerializeField] InputField inputField;
-    [SerializeField] Text resultText;
+    public TMP_InputField inputField;
+    public int input;
 
     public void ValidateInput()
     {
-        string input = inputField.text;
+        input = int.Parse(inputField.text);
 
+        Debug.Log(input);
+        
     }
 }
