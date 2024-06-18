@@ -7,7 +7,7 @@ using TMPro;
 public class InputHandler : MonoBehaviour
 {
     public TMP_InputField inputField;
-    public int input;
+    public int input = 0;
 
     public void ValidateInput()
     {
@@ -16,4 +16,6 @@ public class InputHandler : MonoBehaviour
         Debug.Log(input);
         
     }
+
+    
 }
