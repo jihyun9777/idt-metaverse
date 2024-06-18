@@ -15,29 +15,29 @@ public class CameraSystem : MonoBehaviour
     private Vector2 lastMousePosition;
     private float targetFieldOfView = 50;
 
-    private float mouseX;
-    private float mouseY;
-
     private void Update()
     {
         HandleCameraMovement();
         HandleCameraRotation();
+        HandleCameraDragRotation();
+
         if(useEdgeScrolling) HandleCameraEdgeScrolling();
         if(useDragPan) HandleCameraDragPan();
         HandleCameraZoom();
-        HandleCameraVertical();
     }
 
     private void HandleCameraMovement() 
     {
-        Vector3 inputDir = new Vector3(0, 0, 0);
+        Vector3 inputDir = new Vector3(0f, 0f, 0f);
 
-        if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) inputDir.z = +1f;
-        if(Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) inputDir.z = -1f;
+        if(Input.GetKey(KeyCode.W)) inputDir.z = +1f;
+        if(Input.GetKey(KeyCode.S)) inputDir.z = -1f;
         if(Input.GetKey(KeyCode.A)) inputDir.x = -1f;
         if(Input.GetKey(KeyCode.D)) inputDir.x = +1f;
+        if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)) inputDir.y = +1f;
+        if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.DownArrow)) inputDir.y = -1f;
 
-        Vector3 moveDir = transform.forward * inputDir.z + transform.right * inputDir.x;
+        Vector3 moveDir = transform.right * inputDir.x + transform.up * inputDir.y + transform.forward * inputDir.z;
 
         float moveSpeed = 50f;
         transform.position += moveDir * moveSpeed * Time.deltaTime;
@@ -45,15 +45,25 @@ public class CameraSystem : MonoBehaviour
 
     private void HandleCameraRotation() 
     {
-        float rotateDir = 0f;
         float rotateSpeed = 200f;
+        float rotateDir = 0f;
         
+        if(Input.GetKey(KeyCode.LeftArrow)) rotateDir = +1f;
+        if(Input.GetKey(KeyCode.RightArrow)) rotateDir = -1f;
 
-        if(Input.GetMouseButton(0) || Input.GetKey(KeyCode.LeftArrow)) rotateDir = +1f;
-        if(Input.GetMouseButton(1) || Input.GetKey(KeyCode.RightArrow)) rotateDir = -1f;
-
-        
         transform.eulerAngles += new Vector3(0, rotateDir * rotateSpeed * Time.deltaTime, 0);
+    }
+
+    private void HandleCameraDragRotation()
+    {
+        float rotationSpeed = 200f;
+
+        if (Input.GetMouseButton(0) || Input.GetMouseButton(1)) 
+        {
+            float mouseX = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
+
+            transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y + mouseX, 0);
+        }
     }
 
     private void HandleCameraEdgeScrolling()
@@ -118,22 +128,5 @@ public class CameraSystem : MonoBehaviour
         float zoomSpeed = 20f;
         cinemachineVirtualCamera.m_Lens.FieldOfView = 
             Mathf.Lerp(cinemachineVirtualCamera.m_Lens.FieldOfView, targetFieldOfView, Time.deltaTime * zoomSpeed);
-    }
-
-    //수정 필요
-    private void HandleCameraVertical()
-    {
-        Vector3 inputDir = new Vector3(0, 0, 0);
-
-        if(Input.GetKey(KeyCode.UpArrow)) inputDir.y = +1f;
-        if(Input.GetKey(KeyCode.DownArrow)) inputDir.y = -1f;
-
-        Vector3 moveDir = transform.up * inputDir.y;
-
-        float rotateSpeed = 50f;
-        //transform.rotate += moveDir * moveSpeed * Time.deltaTime;
-        transform.eulerAngles += new Vector3(0, 0, inputDir.y * rotateSpeed * Time.deltaTime);
-
-        //transform.RotateAround(Target.position, Vector3.up, 20 * Time.deltaTime);
     }
 }
