@@ -169,6 +169,9 @@ MonoBehaviour:
   inputX: {fileID: 1018647951}
   inputY: {fileID: 1518274764}
   tile: {fileID: 6795930184597846581, guid: fff436a78c498834eacaff1e144454dd, type: 3}
+  cameraSystem: {fileID: 1825954417}
+  tileWidth: 1
+  tileHeight: 1
 --- !u!1 &318885126
 GameObject:
   m_ObjectHideFlags: 0
@@ -207,7 +210,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 1825954418}
   m_Follow: {fileID: 1825954418}
   m_Lens:
-    FieldOfView: 50
+    FieldOfView: 15
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -241,6 +244,50 @@ Transform:
   - {fileID: 1735766085}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 26.59, y: 0, z: 0}
+--- !u!1 &527043898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 527043900}
+  - component: {fileID: 527043899}
+  m_Layer: 0
+  m_Name: Grid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!156049354 &527043899
+Grid:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527043898}
+  m_Enabled: 1
+  m_CellSize: {x: 1, y: 1, z: 0}
+  m_CellGap: {x: 0, y: 0, z: 0}
+  m_CellLayout: 0
+  m_CellSwizzle: 1
+--- !u!4 &527043900
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527043898}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &540491025
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,7 +832,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 50
+  field of view: 15
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -2873,3 +2920,4 @@ SceneRoots:
   - {fileID: 318885128}
   - {fileID: 1825954418}
   - {fileID: 133210089}
+  - {fileID: 527043900}
