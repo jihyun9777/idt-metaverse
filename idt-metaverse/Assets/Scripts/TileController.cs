@@ -8,6 +8,9 @@ public class TileController : MonoBehaviour
     private Color originalColor;
     public Color highlightColor = Color.yellow; 
 
+    private GameManager gameManager; 
+    private int gridX, gridY; 
+
     void Start()
     {
         tileRenderer = GetComponent<Renderer>();
@@ -15,6 +18,15 @@ public class TileController : MonoBehaviour
         {
             originalColor = tileRenderer.material.color;
         }
+
+        gameManager = FindObjectOfType<GameManager>();
+    }
+
+    public void Initialize(GameManager manager, int x, int y)
+    {
+        gameManager = manager;
+        gridX = x;
+        gridY = y;
     }
 
     void OnMouseEnter()
@@ -35,6 +47,10 @@ public class TileController : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (gameManager != null)
+        {
+            gameManager.SetTileState(gridX, gridY, TileState.Empty);
+        }
         Destroy(gameObject);
     }
 }

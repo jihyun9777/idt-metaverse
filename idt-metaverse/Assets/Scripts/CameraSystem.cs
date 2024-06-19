@@ -9,7 +9,7 @@ public class CameraSystem : MonoBehaviour
     [SerializeField] private bool useEdgeScrolling = true;
     [SerializeField] private bool useDragPan = false;
     [SerializeField] private float fieldOfViewMax = 100;
-    [SerializeField] private float fieldOfViewMin = 10;
+    [SerializeField] private float fieldOfViewMin = 0;
 
     private bool dragPanMoveActive;
     private Vector2 lastMousePosition;
@@ -19,7 +19,7 @@ public class CameraSystem : MonoBehaviour
     {
         HandleCameraMovement();
         HandleCameraRotation();
-        HandleCameraDragRotation();
+        //HandleCameraDragRotation();
 
         if(useEdgeScrolling) HandleCameraEdgeScrolling();
         if(useDragPan) HandleCameraDragPan();
@@ -45,18 +45,18 @@ public class CameraSystem : MonoBehaviour
 
     private void HandleCameraRotation() 
     {
-        float rotateSpeed = 200f;
+        float rotateSpeed = 50f;
         float rotateDir = 0f;
         
-        if(Input.GetKey(KeyCode.LeftArrow)) rotateDir = +1f;
-        if(Input.GetKey(KeyCode.RightArrow)) rotateDir = -1f;
+        if(Input.GetKey(KeyCode.RightArrow)) rotateDir = +1f;
+        if(Input.GetKey(KeyCode.LeftArrow)) rotateDir = -1f;
 
         transform.eulerAngles += new Vector3(0, rotateDir * rotateSpeed * Time.deltaTime, 0);
     }
 
     private void HandleCameraDragRotation()
     {
-        float rotationSpeed = 200f;
+        float rotationSpeed = 50f;
 
         if (Input.GetMouseButton(0) || Input.GetMouseButton(1)) 
         {

@@ -361,6 +361,7 @@
 "Assets/Scripts/GameManager.cs"
 "Assets/Scripts/InputHandler.cs"
 "Assets/Scripts/TileController.cs"
+"Assets/Scripts/TileState.cs"
 "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01.cs"
 "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01_UGUI.cs"
 "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark02.cs"
