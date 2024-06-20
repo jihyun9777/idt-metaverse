@@ -10,7 +10,7 @@ public class CameraSystem : MonoBehaviour
     [SerializeField] private bool useDragPan = false;
     [SerializeField] private float fieldOfViewMax = 100;
     [SerializeField] private float fieldOfViewMin = 0;
-
+    
     private bool dragPanMoveActive;
     private Vector2 lastMousePosition;
     private float targetFieldOfView = 50;
@@ -28,7 +28,7 @@ public class CameraSystem : MonoBehaviour
 
     private void HandleCameraMovement() 
     {
-        Vector3 inputDir = new Vector3(0f, 0f, 0f);
+        Vector3 inputDir = new Vector3();
 
         if(Input.GetKey(KeyCode.W)) inputDir.z = +1f;
         if(Input.GetKey(KeyCode.S)) inputDir.z = -1f;
@@ -39,8 +39,13 @@ public class CameraSystem : MonoBehaviour
 
         Vector3 moveDir = transform.right * inputDir.x + transform.up * inputDir.y + transform.forward * inputDir.z;
 
-        float moveSpeed = 50f;
-        transform.position += moveDir * moveSpeed * Time.deltaTime;
+        float moveSpeed = 30f;
+        Vector3 newPosition = transform.position + moveDir * moveSpeed * Time.deltaTime;
+
+        // Can't go lower than ground
+        if(newPosition.y < 0) newPosition.y = 0;
+
+        transform.position = newPosition;
     }
 
     private void HandleCameraRotation() 
@@ -68,7 +73,7 @@ public class CameraSystem : MonoBehaviour
 
     private void HandleCameraEdgeScrolling()
     {
-        Vector3 inputDir = new Vector3(0, 0, 0);
+        Vector3 inputDir = new Vector3();
 
         int edgeScrollSize = 20;
 
@@ -85,7 +90,7 @@ public class CameraSystem : MonoBehaviour
 
     private void HandleCameraDragPan()
     {
-        Vector3 inputDir = new Vector3(0, 0, 0);
+        Vector3 inputDir = new Vector3();
 
         if(Input.GetMouseButtonDown(1))
         {

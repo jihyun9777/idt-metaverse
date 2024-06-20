@@ -8,13 +8,16 @@ public class GameManager : MonoBehaviour
     public TMP_InputField inputX;
     public TMP_InputField inputY;
     public GameObject tile;
+    public GameObject previewTile;
     public GameObject cameraSystem;
     public RectTransform uiElement;
 
+    public Vector3 origin = new Vector3(0.5f, 0, 0.5f);
     public int gridX = 100;
     public int gridY = 100;
     public int tileWidth = 10;
     public int tileHeight = 10;
+    public bool createMode = false;
 
     private int intX = 1;
     private int intY = 1;
@@ -22,6 +25,8 @@ public class GameManager : MonoBehaviour
     private bool yReady = false;
     private bool floorCreated = false;
     private Vector2 currentFloor;
+    private GameObject currentPreviewTile;
+    private Vector3 previewTilePosition;
 
     private TileState[,] floorGrid;
 
@@ -29,9 +34,10 @@ public class GameManager : MonoBehaviour
 
     public void Start()
     {
-        // Initialize floor grid with empty values
         floorGrid = new TileState[gridX, gridY];
-        InitializeFloorGrid();
+
+        currentPreviewTile = Instantiate(previewTile);
+        currentPreviewTile.SetActive(false);
 
         CreateFloor(intX, intY);
     }
@@ -62,15 +68,20 @@ public class GameManager : MonoBehaviour
                 CreateFloor(intX, intY);
         }
 
+        //Avoid UI click or hover
+        Vector3 mousePosition = Input.mousePosition;
+        //Enter UI position manually 
+        Rect uiArea = new Rect(0f, 840f, 240f, 240f);
+
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 mousePosition = Input.mousePosition;
-
-            //Enter UI position manually 
-            Rect uiArea = new Rect(0f, 840f, 240f, 240f);
-
             if(!uiArea.Contains(mousePosition))
                 HandleMouseClick(mousePosition);
+        }
+        else if(createMode)
+        {
+            if(!uiArea.Contains(mousePosition))
+                UpdatePreviewTile(Input.mousePosition);
         }
     }
 
@@ -78,6 +89,7 @@ public class GameManager : MonoBehaviour
 
     #region Create Floor
 
+    //Initialize FloorGrid 2D array to zero 
     void InitializeFloorGrid()
     {
         // Initialize the entire grid as "empty"
@@ -90,6 +102,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Create floor according to user input
     public void CreateFloor(int x, int y)
     {
         ClearFloor();
@@ -98,7 +111,8 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < y; j++)
             {
-                GameObject newTile = Instantiate(tile, new Vector3(0.5f + i, 0, 0.5f + j), Quaternion.identity);
+                Vector3 tilePosition = new Vector3((gridX / 2 + i - gridX / 2 + origin.x), 0, (gridY / 2 + j - gridY / 2 + origin.z));
+                GameObject newTile = Instantiate(tile, tilePosition, Quaternion.identity);
                 newTile.transform.SetParent(transform);
 
                 //Giving TileController position of each tile created
@@ -116,9 +130,13 @@ public class GameManager : MonoBehaviour
         currentFloor = new Vector2(intX, intY);
         //PrintGrid();
 
+        //버튼만들기 전까지 임시
+        createMode = true;
+
         AdjustCameraSystemPosition(x, y);
     }
 
+    //Clear any created floor
     public void ClearFloor()
     {
         foreach (Transform child in transform)
@@ -129,6 +147,7 @@ public class GameManager : MonoBehaviour
         InitializeFloorGrid();
     }
 
+    //Print floor grid 2D array
     private void PrintGrid()
     {
         for (int i = 0; i < gridX; i++)
@@ -141,11 +160,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Set a tile state <empty, occupied, floor>
     public void SetTileState(int x, int y, TileState state)
     {
         floorGrid[x, y] = state;
     }
 
+    //Create a tile when clicked
     private void HandleMouseClick(Vector3 mousePosition)
     {
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
@@ -153,28 +174,55 @@ public class GameManager : MonoBehaviour
         {
             Vector3 hitPosition = hit.point;
 
-            // 그리드 좌표로 변환
-            int gridX = Mathf.RoundToInt(hitPosition.x / tileWidth);
-            int gridZ = Mathf.RoundToInt(hitPosition.z / tileHeight);
+            //Set position of tile (X, Z)
+            int pointX = Mathf.FloorToInt(hitPosition.x / tileWidth) + (this.gridX / 2);
+            int pointZ = Mathf.FloorToInt(hitPosition.z / tileHeight) + (this.gridY / 2);
 
-            // 중심 좌표 보정
-            gridX += gridX / 2;
-            gridZ += gridY / 2;
-
-            if (floorGrid[gridX, gridZ] == TileState.Empty)
+            //If there is no tile
+            if (pointX < gridX && pointZ < gridY && floorGrid[pointX, pointZ] == TileState.Empty)
             {
-                Vector3 tilePosition = new Vector3(gridX * tileWidth, 0, gridZ * tileHeight);
+                //Had to set it this way, since a tile on (50, 50) in floorGrid is actually on (0,0)
+                Vector3 tilePosition = new Vector3(pointX - gridX / 2 + origin.x, 0, pointZ - gridY / 2 + origin.z);
+
                 GameObject newTile = Instantiate(tile, tilePosition, Quaternion.identity);
                 newTile.transform.SetParent(transform);
 
                 TileController tileController = newTile.GetComponent<TileController>();
                 if (tileController != null)
                 {
-                    tileController.Initialize(this, gridX, gridZ);
+                    tileController.Initialize(this, pointX, pointZ);
                 }
 
-                floorGrid[gridX, gridZ] = TileState.Floor;
+                floorGrid[pointX, pointZ] = TileState.Floor;
             }
+        }
+    }
+
+    //Create a preview tile when hovered
+    private void UpdatePreviewTile(Vector3 mousePosition)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            Vector3 hitPosition = hit.point;
+
+            int pointX = Mathf.FloorToInt(hitPosition.x / tileWidth) + (this.gridX / 2);
+            int pointZ = Mathf.FloorToInt(hitPosition.z / tileHeight) + (this.gridY / 2);
+
+            if (pointX < gridX && pointZ < gridY && floorGrid[pointX, pointZ] == TileState.Empty)
+            {
+                previewTilePosition = new Vector3(pointX - gridX / 2 + origin.x, 0, pointZ - gridY / 2 + origin.z);
+                currentPreviewTile.transform.position = previewTilePosition;
+                currentPreviewTile.SetActive(true);
+            }
+            else
+            {
+                currentPreviewTile.SetActive(false);
+            }
+        }
+        else
+        {
+            currentPreviewTile.SetActive(false);
         }
     }
 
