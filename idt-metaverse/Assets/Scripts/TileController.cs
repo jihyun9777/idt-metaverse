@@ -45,12 +45,13 @@ public class TileController : MonoBehaviour
         }
     }
 
-    void OnMouseDown()
+    public void OnMouseDown()
     {
         if (gameManager != null)
         {
-            gameManager.SetTileState(gridX, gridY, TileState.Empty);
+            gameManager.OnTileDestroyed(gridX, gridY);
+            Debug.Log("Destroying tile at (" + gridX + ", " + gridY + ")");
+            Destroy(gameObject);
         }
-        Destroy(gameObject);
     }
 }

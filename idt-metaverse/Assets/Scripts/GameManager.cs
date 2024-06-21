@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public int tileWidth = 10;
     public int tileHeight = 10;
     public bool createMode = false;
+    public bool canCreateTile = true;
 
     private int intX = 1;
     private int intY = 1;
@@ -73,14 +74,11 @@ public class GameManager : MonoBehaviour
         //Enter UI position manually 
         Rect uiArea = new Rect(0f, 840f, 240f, 240f);
 
-        if (Input.GetMouseButtonDown(0))
+        if(!uiArea.Contains(mousePosition))
         {
-            if(!uiArea.Contains(mousePosition))
+            if(createMode && Input.GetMouseButtonDown(0))
                 HandleMouseClick(mousePosition);
-        }
-        else if(createMode)
-        {
-            if(!uiArea.Contains(mousePosition))
+            else if(createMode)
                 UpdatePreviewTile(Input.mousePosition);
         }
     }
@@ -169,6 +167,9 @@ public class GameManager : MonoBehaviour
     //Create a tile when clicked
     private void HandleMouseClick(Vector3 mousePosition)
     {
+        //Prevent tile creation if a tile was just destroyed
+        if (!canCreateTile) return;
+
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
@@ -194,6 +195,7 @@ public class GameManager : MonoBehaviour
                 }
 
                 floorGrid[pointX, pointZ] = TileState.Floor;
+                Debug.Log("Not here when Destroied");
             }
         }
     }
@@ -224,6 +226,19 @@ public class GameManager : MonoBehaviour
         {
             currentPreviewTile.SetActive(false);
         }
+    }
+
+    public void OnTileDestroyed(int x, int y)
+    {
+        SetTileState(x, y, TileState.Empty);
+        StartCoroutine(PreventTileCreationTemporarily());
+    }
+
+    private IEnumerator PreventTileCreationTemporarily()
+    {
+        canCreateTile = false;
+        yield return new WaitForSeconds(0.5f); // Adjust delay as needed
+        canCreateTile = true;
     }
 
     #endregion
