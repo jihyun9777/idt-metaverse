@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public int gridY = 100;
     public int tileWidth = 10;
     public int tileHeight = 10;
-    public bool createMode = false;
+    public bool createMode = true;
     public bool canCreateTile = true;
 
     private int intX = 1;
@@ -69,18 +69,23 @@ public class GameManager : MonoBehaviour
                 CreateFloor(intX, intY);
         }
 
-        //Avoid UI click or hover
-        Vector3 mousePosition = Input.mousePosition;
-        //Enter UI position manually 
-        Rect uiArea = new Rect(0f, 840f, 240f, 240f);
-
-        if(!uiArea.Contains(mousePosition))
+        if(createMode)
         {
-            if(createMode && Input.GetMouseButtonDown(0))
-                HandleMouseClick(mousePosition);
-            else if(createMode)
-                UpdatePreviewTile(Input.mousePosition);
+            //Avoid UI click or hover
+            Vector3 mousePosition = Input.mousePosition;
+            //Enter UI position manually (left x, top/bottom y, width, height)
+            Rect uiArea = new Rect(0f, 650f, 300f, 500f);
+
+            if(!uiArea.Contains(mousePosition))
+            {
+                if(Input.GetMouseButtonDown(0))
+                    HandleMouseClick(mousePosition);
+                else
+                    UpdatePreviewTile(Input.mousePosition);
+            }
         }
+        else
+            currentPreviewTile.SetActive(false);
     }
 
     #endregion
@@ -127,10 +132,6 @@ public class GameManager : MonoBehaviour
 
         currentFloor = new Vector2(intX, intY);
         //PrintGrid();
-
-        //버튼만들기 전까지 임시
-        createMode = true;
-
         AdjustCameraSystemPosition(x, y);
     }
 
@@ -195,7 +196,6 @@ public class GameManager : MonoBehaviour
                 }
 
                 floorGrid[pointX, pointZ] = TileState.Floor;
-                Debug.Log("Not here when Destroied");
             }
         }
     }

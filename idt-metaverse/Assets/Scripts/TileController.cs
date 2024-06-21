@@ -31,7 +31,7 @@ public class TileController : MonoBehaviour
 
     void OnMouseEnter()
     {
-        if (tileRenderer != null)
+        if (tileRenderer != null && gameManager.createMode)
         {
             tileRenderer.material.color = highlightColor; 
         }
@@ -47,10 +47,9 @@ public class TileController : MonoBehaviour
 
     public void OnMouseDown()
     {
-        if (gameManager != null)
+        if (gameManager != null && gameManager.createMode)
         {
             gameManager.OnTileDestroyed(gridX, gridY);
-            Debug.Log("Destroying tile at (" + gridX + ", " + gridY + ")");
             Destroy(gameObject);
         }
     }
