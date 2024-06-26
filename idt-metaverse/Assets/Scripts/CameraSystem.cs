@@ -53,8 +53,8 @@ public class CameraSystem : MonoBehaviour
         float rotateSpeed = 50f;
         float rotateDir = 0f;
         
-        if(Input.GetKey(KeyCode.RightArrow)) rotateDir = +1f;
-        if(Input.GetKey(KeyCode.LeftArrow)) rotateDir = -1f;
+        if(Input.GetKey(KeyCode.RightArrow)) rotateDir = -1f;
+        if(Input.GetKey(KeyCode.LeftArrow)) rotateDir = +1f;
 
         transform.eulerAngles += new Vector3(0, rotateDir * rotateSpeed * Time.deltaTime, 0);
     }

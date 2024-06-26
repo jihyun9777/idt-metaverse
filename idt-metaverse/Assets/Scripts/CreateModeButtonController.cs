@@ -16,6 +16,8 @@ public class CreateModeButtonController : MonoBehaviour
         
         if(gameManager.createMode)
             ChangeButtonColors(OnColor);
+        else
+            ChangeButtonColors(OffColor);
     }
 
     public void ChangeCreateMode()
@@ -23,9 +25,21 @@ public class CreateModeButtonController : MonoBehaviour
         gameManager.createMode = !gameManager.createMode;
 
         if (gameManager.createMode)
-            ChangeButtonColors(OnColor);
+            CreateModeOn();
         else
-            ChangeButtonColors(OffColor);
+            CreateModeOff();
+    }
+
+    public void CreateModeOn()
+    {
+        ChangeButtonColors(OnColor);
+        Debug.Log("On");
+    }
+
+    public void CreateModeOff()
+    {
+        ChangeButtonColors(OffColor);
+        Debug.Log("Off");
     }
 
     private void ChangeButtonColors(Color color)
@@ -33,6 +47,9 @@ public class CreateModeButtonController : MonoBehaviour
         ColorBlock cb = button.colors;
         cb.normalColor = color;
         cb.highlightedColor = color;
+        cb.pressedColor = color;
+        cb.selectedColor = color;
+        cb.disabledColor = color;
         button.colors = cb;
     }
 }

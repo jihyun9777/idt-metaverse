@@ -361,6 +361,8 @@
 "Assets/Scripts/CreateModeButtonController.cs"
 "Assets/Scripts/GameManager.cs"
 "Assets/Scripts/InputHandler.cs"
+"Assets/Scripts/MouseDrag.cs"
+"Assets/Scripts/PanelController.cs"
 "Assets/Scripts/TileController.cs"
 "Assets/Scripts/TileState.cs"
 "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01.cs"

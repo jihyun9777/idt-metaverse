@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TileController : MonoBehaviour
 {
+    public Vector2 gridPosition;
+
     private Renderer tileRenderer;
     private Color originalColor;
     public Color highlightColor = Color.yellow; 
@@ -13,6 +15,8 @@ public class TileController : MonoBehaviour
 
     void Start()
     {
+        gridPosition = new Vector2(transform.position.x, transform.position.z);
+        
         tileRenderer = GetComponent<Renderer>();
         if (tileRenderer != null)
         {
