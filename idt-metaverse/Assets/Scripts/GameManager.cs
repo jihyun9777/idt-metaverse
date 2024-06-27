@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     private GameObject currentPreviewTile;
     private Vector3 previewTilePosition;
 
-    private TileState[,] floorGrid;
+    public TileState[,] floorGrid;
 
     #region Unity Methods
 
@@ -260,7 +260,5 @@ public class GameManager : MonoBehaviour
         float distance = Mathf.Max(totalWidth, totalHeight) * 0.3f; 
         cameraSystem.transform.position = new Vector3(centerPosition.x, distance, centerPosition.z - distance);
     }
-
-
 
 }

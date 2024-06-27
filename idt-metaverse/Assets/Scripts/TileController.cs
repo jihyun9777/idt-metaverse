@@ -11,7 +11,7 @@ public class TileController : MonoBehaviour
     public Color highlightColor = Color.yellow; 
 
     private GameManager gameManager; 
-    private int gridX, gridY; 
+    public int gridX, gridY; 
 
     void Start()
     {
@@ -33,6 +33,17 @@ public class TileController : MonoBehaviour
         gridY = y;
     }
 
+    public TileState GetTileState()
+    {
+        return gameManager.floorGrid[gridX, gridY];
+    }
+
+    public void SetTileState(TileState state)
+    {
+        gameManager.floorGrid[gridX, gridY] = state;
+    }
+
+    //Highlight this tile when mouse enter
     void OnMouseEnter()
     {
         if (tileRenderer != null && gameManager.createMode)
@@ -41,6 +52,7 @@ public class TileController : MonoBehaviour
         }
     }
 
+    //Un-do highlight when mouse exit
     void OnMouseExit()
     {
         if (tileRenderer != null)
@@ -49,6 +61,7 @@ public class TileController : MonoBehaviour
         }
     }
 
+    //Destroy this tile when clicked
     public void OnMouseDown()
     {
         if (gameManager != null && gameManager.createMode)
