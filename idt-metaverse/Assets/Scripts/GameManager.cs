@@ -5,23 +5,26 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    #region Floor Variables
+
+    //Floor size input X and Y
     public TMP_InputField inputX;
     public TMP_InputField inputY;
     public GameObject tile;
     public GameObject previewTile;
-    public GameObject cameraSystem;
-    public RectTransform uiElement;
 
-    public Vector3 origin = new Vector3(0.5f, 0, 0.5f);
-    public int gridX = 100;
-    public int gridY = 100;
-    public int tileWidth = 10;
-    public int tileHeight = 10;
-    public bool createMode = true;
-    public bool canCreateTile = true;
+    public Vector3 origin;
+    public int gridX;
+    public int gridY;
+    public int tileWidth;
+    public int tileHeight;
+    public bool createMode;
+    public bool canCreateTile;
 
+    //Integer form of input X and Y
     private int intX = 1;
     private int intY = 1;
+    //To check if both X and Y are entered
     private bool xReady = false;
     private bool yReady = false;
     private bool floorCreated = false;
@@ -30,31 +33,51 @@ public class GameManager : MonoBehaviour
     private Vector3 previewTilePosition;
 
     public TileState[,] floorGrid;
+    #endregion
+    #region Object Variables
+
+    //Initialize outside
+    public TMP_InputField objectSizeX;
+    public TMP_InputField objectSizeY;
+    public GameObject panel;
+
+    //Initialize inside
+    public GameObject piece;
+
+    private int objectIntX;
+    private int objectIntY;
+    private bool objectXReady = false;
+    private bool objectYReady = false;
+
+    #endregion
 
     #region Unity Methods
 
     public void Start()
     {
+        #region Floor Start
+
         floorGrid = new TileState[gridX, gridY];
 
         currentPreviewTile = Instantiate(previewTile);
         currentPreviewTile.SetActive(false);
 
         CreateFloor(intX, intY);
+
+        #endregion
+    
+
+
     }
 
     public void Update()
     {
-        if (int.TryParse(inputX.text, out int newX))
-        {
-            intX = newX;
+        #region Floor Update
+
+        if (int.TryParse(inputX.text, out intX))
             xReady = true;
-        }
-        if (int.TryParse(inputY.text, out int newY))
-        {
-            intY = newY;
+        if (int.TryParse(inputY.text, out intY))
             yReady = true;
-        }
         
         //If x and y are both entered
         if(xReady && yReady && !floorCreated)
@@ -86,6 +109,25 @@ public class GameManager : MonoBehaviour
         }
         else
             currentPreviewTile.SetActive(false);
+
+        #endregion
+
+        //HTTP로 값 불러오면 수정--------------------------------------------------------------------------------
+        #region Object Update
+
+        if (int.TryParse(objectSizeX.text, out objectIntX))
+            objectXReady = true;
+        if (int.TryParse(objectSizeY.text, out objectIntY))
+            objectYReady = true;
+
+        if (objectXReady && objectYReady)
+        {
+            CreateObject(objectIntX, objectIntY);
+            objectXReady = false;
+            objectYReady = false;
+        }
+
+        #endregion
     }
 
     #endregion
@@ -243,6 +285,10 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    #region Reposition Camera
+
+    public GameObject cameraSystem;
+
     //Adjust camera position according to the size of floor
     private void AdjustCameraSystemPosition(int x, int y)
     {
@@ -261,4 +307,26 @@ public class GameManager : MonoBehaviour
         cameraSystem.transform.position = new Vector3(centerPosition.x, distance, centerPosition.z - distance);
     }
 
+    #endregion
+
+    #region Create Object
+
+    public void CreateObject(int x, int y)
+    {
+        Vector3 startPosition = Vector3.zero;
+
+        piece = new GameObject("Object");
+
+        for (int i = 0; i < x; i++)
+        {
+            for (int j = 0; j < y; j++)
+            {
+                GameObject newPanel = Instantiate(panel, piece.transform);
+                Vector3 panelPosition = startPosition + new Vector3(i, 0f, j);
+                newPanel.transform.position = panelPosition;
+            }
+        }
+    }
+
+    #endregion
 }
