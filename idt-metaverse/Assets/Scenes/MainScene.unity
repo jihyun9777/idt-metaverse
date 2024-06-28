@@ -643,12 +643,13 @@ MonoBehaviour:
   gridY: 100
   tileWidth: 1
   tileHeight: 1
-  createMode: 1
+  createMode: 0
   canCreateTile: 1
   objectSizeX: {fileID: 747667604}
   objectSizeY: {fileID: 171601594}
   panel: {fileID: 7257443238545854309, guid: 26530f2680b9f614983b259368667911, type: 3}
   piece: {fileID: 0}
+  fixedYPosition: 0.505
   cameraSystem: {fileID: 1825954417}
 --- !u!1 &139790318
 GameObject:
@@ -1248,7 +1249,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 1825954418}
   m_Follow: {fileID: 1825954418}
   m_Lens:
-    FieldOfView: 50
+    FieldOfView: 55
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -2781,7 +2782,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 50
+  field of view: 55
   orthographic: 0
   orthographic size: 5
   m_Depth: -1

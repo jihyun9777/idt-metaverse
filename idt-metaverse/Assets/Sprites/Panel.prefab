@@ -123,6 +123,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ddeca2d76b92934cbeee88602e98250, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fixedYPosition: 0.505
+  fixedYPosition: 0
   validColor: {r: 0, g: 1, b: 0, a: 1}
   invalidColor: {r: 1, g: 0, b: 0, a: 1}

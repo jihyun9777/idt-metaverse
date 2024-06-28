@@ -43,11 +43,13 @@ public class GameManager : MonoBehaviour
 
     //Initialize inside
     public GameObject piece;
+    public float fixedYPosition;
 
     private int objectIntX;
     private int objectIntY;
     private bool objectXReady = false;
     private bool objectYReady = false;
+    private bool objectCreated = false;
 
     #endregion
 
@@ -120,11 +122,10 @@ public class GameManager : MonoBehaviour
         if (int.TryParse(objectSizeY.text, out objectIntY))
             objectYReady = true;
 
-        if (objectXReady && objectYReady)
+        if (objectXReady && objectYReady && !objectCreated)
         {
             CreateObject(objectIntX, objectIntY);
-            objectXReady = false;
-            objectYReady = false;
+            objectCreated = true;
         }
 
         #endregion
@@ -313,7 +314,8 @@ public class GameManager : MonoBehaviour
 
     public void CreateObject(int x, int y)
     {
-        Vector3 startPosition = Vector3.zero;
+        //Temporary 
+        Vector3 startPosition = new Vector3(2, fixedYPosition, 0);
 
         piece = new GameObject("Object");
 
