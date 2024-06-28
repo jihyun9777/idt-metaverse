@@ -34,22 +34,24 @@ public class GameManager : MonoBehaviour
 
     public TileState[,] floorGrid;
     #endregion
-    #region Object Variables
+    #region Piece Variables
 
     //Initialize outside
-    public TMP_InputField objectSizeX;
-    public TMP_InputField objectSizeY;
+    public TMP_InputField pieceSizeX;
+    public TMP_InputField pieceSizeY;
     public GameObject panel;
 
-    //Initialize inside
+    public PieceController pieceController;
     public GameObject piece;
-    public float fixedYPosition;
 
-    private int objectIntX;
-    private int objectIntY;
-    private bool objectXReady = false;
-    private bool objectYReady = false;
-    private bool objectCreated = false;
+    private int pieceIntX;
+    private int pieceIntY;
+    private bool pieceXReady = false;
+    private bool pieceYReady = false;
+    private bool pieceCreated = false;
+
+    public float fixedYPosition;
+    private Vector3 startPosition;
 
     #endregion
 
@@ -67,9 +69,8 @@ public class GameManager : MonoBehaviour
         CreateFloor(intX, intY);
 
         #endregion
-    
 
-
+        startPosition = new Vector3(2f, fixedYPosition, 0f);
     }
 
     public void Update()
@@ -115,17 +116,17 @@ public class GameManager : MonoBehaviour
         #endregion
 
         //HTTP로 값 불러오면 수정--------------------------------------------------------------------------------
-        #region Object Update
+        #region Piece Update
 
-        if (int.TryParse(objectSizeX.text, out objectIntX))
-            objectXReady = true;
-        if (int.TryParse(objectSizeY.text, out objectIntY))
-            objectYReady = true;
+        if (int.TryParse(pieceSizeX.text, out pieceIntX))
+            pieceXReady = true;
+        if (int.TryParse(pieceSizeY.text, out pieceIntY))
+            pieceYReady = true;
 
-        if (objectXReady && objectYReady && !objectCreated)
+        if (pieceXReady && pieceYReady && !pieceCreated)
         {
-            CreateObject(objectIntX, objectIntY);
-            objectCreated = true;
+            CreatePiece(pieceIntX, pieceIntY);
+            pieceCreated = true;
         }
 
         #endregion
@@ -310,14 +311,13 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
-    #region Create Object
+    #region Create Piece
 
-    public void CreateObject(int x, int y)
+    public void CreatePiece(int x, int y)
     {
-        //Temporary 
-        Vector3 startPosition = new Vector3(2, fixedYPosition, 0);
-
         piece = new GameObject("Object");
+        piece.AddComponent<BoxCollider>();
+        piece.AddComponent<Rigidbody>().isKinematic = true;
 
         for (int i = 0; i < x; i++)
         {
@@ -328,6 +328,9 @@ public class GameManager : MonoBehaviour
                 newPanel.transform.position = panelPosition;
             }
         }
+
+        piece.AddComponent<PieceController>();
+        
     }
 
     #endregion
