@@ -4,22 +4,28 @@ using UnityEngine;
 
 public class PanelController : MonoBehaviour
 {
+    public TileState panelState = TileState.Empty;
+
     // private Vector3 offset;
-    // private Dictionary<TileController, int> overlappingTiles = new Dictionary<TileController, int>();
+    private Dictionary<TileController, int> overlappingTiles = new Dictionary<TileController, int>();
     // public float fixedYPosition;
     // private Vector3 originalPosition;
 
-    // private Color originalColor;
-    // public Color validColor = Color.green;
-    // public Color invalidColor = Color.red;
-    // private Renderer panelRenderer;
+    private Color originalColor;
+    public Color validColor = Color.green;
+    public Color invalidColor = Color.red;
+    private Renderer panelRenderer;
 
-    // void Start()
-    // {
-    //     panelRenderer = GetComponent<Renderer>(); 
-    //     originalColor = panelRenderer.material.color;
-    //     originalPosition = transform.position;
-    // }
+    void Start()
+    {
+        panelRenderer = GetComponent<Renderer>(); 
+        originalColor = panelRenderer.material.color;
+    }
+
+    public void SetEmpty()
+    {
+        panelState = TileState.Empty;
+    }
 
     // #region Mouse Drag
 
@@ -57,7 +63,7 @@ public class PanelController : MonoBehaviour
 
     // #endregion
 
-    // #region Locate Panel
+    #region Locate Panel
     
     // void OnMouseUp()
     // {
@@ -87,57 +93,66 @@ public class PanelController : MonoBehaviour
     //         UpdatePanelColor();
     // }
 
-    // //Return the closest tile from this panel
-    // private TileController GetClosestTile()
-    // {
-    //     float closestDistance = float.MaxValue;
-    //     TileController closestTile = null;
+    //Return the closest tile from this panel
+    public TileController GetClosestTile()
+    {
+        float closestDistance = float.MaxValue;
+        TileController closestTile = null;
 
-    //     Vector3 panelCenter = transform.position;
+        Vector3 panelCenter = transform.position;
 
-    //     //Iterate through all overlapping tiles
-    //     foreach (var pair in overlappingTiles)
-    //     {
-    //         TileController tile = pair.Key;
-    //         Vector3 tileCenter = tile.transform.position;
+        //Iterate through all overlapping tiles
+        foreach (var pair in overlappingTiles)
+        {
+            TileController tile = pair.Key;
+            Vector3 tileCenter = tile.transform.position;
 
-    //         //Calculate distance between panel center and tile center
-    //         float distance = Vector3.Distance(panelCenter, tileCenter);
+            //Calculate distance between panel center and tile center
+            float distance = Vector3.Distance(panelCenter, tileCenter);
 
-    //         //Update closest tile if this tile is closer
-    //         if (distance < closestDistance)
-    //         {
-    //             closestDistance = distance;
-    //             closestTile = tile;
-    //         }
-    //     }
+            //Update closest tile if this tile is closer
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestTile = tile;
+            }
+        }
 
-    //     return closestTile;
-    // }
+        return closestTile;
+    }
 
-    // //Add a tile to overlappingTiles
-    // void OnTriggerEnter(Collider other)
-    // {
-    //     TileController tile = other.GetComponent<TileController>();
-    //     if (tile != null)
-    //     {
-    //         overlappingTiles[tile] = 1; 
-    //     }
-    // }
+    //Add a tile to overlappingTiles
+    void OnTriggerEnter(Collider other)
+    {
+        TileController tile = other.GetComponent<TileController>();
+        if (tile != null)
+        {
+            overlappingTiles[tile] = 1; 
+        
+            if (tile.GetTileState() == TileState.Floor)
+                panelState = TileState.Floor;
+            else if(tile.GetTileState() == TileState.Occupied)
+                panelState = TileState.Occupied;
+        }
+    }
 
-    // //Remove a tile from overlappingTiles
-    // void OnTriggerExit(Collider other)
-    // {
-    //     TileController tile = other.GetComponent<TileController>();
-    //     if (tile != null && overlappingTiles.ContainsKey(tile))
-    //     {
-    //         overlappingTiles.Remove(tile);
-    //     }
-    // }
+    //Remove a tile from overlappingTiles
+    void OnTriggerExit(Collider other)
+    {
+        TileController tile = other.GetComponent<TileController>();
+        if (tile != null && overlappingTiles.ContainsKey(tile))
+        {
+            overlappingTiles.Remove(tile);
+        }
+        if (tile != null && tile.GetTileState() == TileState.Floor)
+        {
+            panelState = TileState.Empty;
+        }
+    }
 
-    // #endregion
+    #endregion
 
-    // #region Highlight Panel
+    #region Highlight Panel
 
     // private void UpdatePanelColor()
     // {
@@ -166,25 +181,21 @@ public class PanelController : MonoBehaviour
     //     panelRenderer.material.color = color;
     // }
 
-    // #endregion
-
-    public bool panelState = false;
-
-    void OnTriggerEnter(Collider other)
+    public void SetValidColor()
     {
-        TileController tile = other.GetComponent<TileController>();
-        if (tile != null && tile.GetTileState() == TileState.Floor)
-        {
-            panelState = true;
-        }
+        if (panelRenderer != null)  panelRenderer.material.color = validColor;
     }
 
-    void OnTriggerExit(Collider other)
+    public void SetInvalidColor()
     {
-        TileController tile = other.GetComponent<TileController>();
-        if (tile != null && tile.GetTileState() == TileState.Floor)
-        {
-            panelState = false;
-        }
+        if (panelRenderer != null)  panelRenderer.material.color = invalidColor;
     }
+
+    public void ResetPanelColor()
+    {
+        if (panelRenderer != null)  panelRenderer.material.color = originalColor;
+    }
+
+    #endregion
+
 }

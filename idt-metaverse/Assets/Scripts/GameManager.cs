@@ -71,6 +71,7 @@ public class GameManager : MonoBehaviour
         #endregion
 
         startPosition = new Vector3(2f, fixedYPosition, 0f);
+        CreatePiece(2, 2);
     }
 
     public void Update()
