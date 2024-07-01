@@ -33,13 +33,11 @@ public class CreateModeButtonController : MonoBehaviour
     public void CreateModeOn()
     {
         ChangeButtonColors(OnColor);
-        Debug.Log("On");
     }
 
     public void CreateModeOff()
     {
         ChangeButtonColors(OffColor);
-        Debug.Log("Off");
     }
 
     private void ChangeButtonColors(Color color)

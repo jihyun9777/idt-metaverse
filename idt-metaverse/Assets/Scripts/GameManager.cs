@@ -44,11 +44,8 @@ public class GameManager : MonoBehaviour
     public PieceController pieceController;
     public GameObject piece;
 
-    private int pieceIntX;
-    private int pieceIntY;
     private bool pieceXReady = false;
     private bool pieceYReady = false;
-    private bool pieceCreated = false;
 
     public float fixedYPosition;
     private Vector3 startPosition;
@@ -71,7 +68,6 @@ public class GameManager : MonoBehaviour
         #endregion
 
         startPosition = new Vector3(2f, fixedYPosition, 0f);
-        CreatePiece(2, 2);
     }
 
     public void Update()
@@ -113,22 +109,6 @@ public class GameManager : MonoBehaviour
         }
         else
             currentPreviewTile.SetActive(false);
-
-        #endregion
-
-        //HTTP로 값 불러오면 수정--------------------------------------------------------------------------------
-        #region Piece Update
-
-        if (int.TryParse(pieceSizeX.text, out pieceIntX))
-            pieceXReady = true;
-        if (int.TryParse(pieceSizeY.text, out pieceIntY))
-            pieceYReady = true;
-
-        if (pieceXReady && pieceYReady && !pieceCreated)
-        {
-            CreatePiece(pieceIntX, pieceIntY);
-            pieceCreated = true;
-        }
 
         #endregion
     }
@@ -314,24 +294,31 @@ public class GameManager : MonoBehaviour
 
     #region Create Piece
 
-    public void CreatePiece(int x, int y)
+    public void CreatePiece()
     {
-        piece = new GameObject("Object");
-        piece.AddComponent<BoxCollider>();
-        piece.AddComponent<Rigidbody>().isKinematic = true;
+        if (int.TryParse(pieceSizeX.text, out int x))
+            pieceXReady = true;
+        if (int.TryParse(pieceSizeY.text, out int y))
+            pieceYReady = true;
 
-        for (int i = 0; i < x; i++)
+        if (pieceXReady && pieceYReady)
         {
-            for (int j = 0; j < y; j++)
-            {
-                GameObject newPanel = Instantiate(panel, piece.transform);
-                Vector3 panelPosition = startPosition + new Vector3(i, 0f, j);
-                newPanel.transform.position = panelPosition;
-            }
-        }
+            piece = new GameObject("Piece");
+            piece.AddComponent<BoxCollider>();
+            piece.AddComponent<Rigidbody>().isKinematic = true;
 
-        piece.AddComponent<PieceController>();
-        
+            for (int i = 0; i < x; i++)
+            {
+                for (int j = 0; j < y; j++)
+                {
+                    GameObject newPanel = Instantiate(panel, piece.transform);
+                    Vector3 panelPosition = startPosition + new Vector3(i, 0f, j);
+                    newPanel.transform.position = panelPosition;
+                }
+            }
+
+            piece.AddComponent<PieceController>();
+        }
     }
 
     #endregion
