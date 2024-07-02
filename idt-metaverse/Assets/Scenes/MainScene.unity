@@ -645,12 +645,13 @@ MonoBehaviour:
   tileHeight: 1
   createMode: 0
   canCreateTile: 1
+  FixedTileYPosition: -0.505
   pieceSizeX: {fileID: 747667604}
   pieceSizeY: {fileID: 171601594}
   panel: {fileID: 7257443238545854309, guid: 26530f2680b9f614983b259368667911, type: 3}
   pieceController: {fileID: 0}
   piece: {fileID: 0}
-  fixedYPosition: 0.505
+  tree: {fileID: 1645276015}
   cameraSystem: {fileID: 1825954417}
 --- !u!1 &134733787
 GameObject:
@@ -1004,8 +1005,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6716e7c906fd0684c87361a1fb32e4c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputField: {fileID: 171601594}
-  input: 0
 --- !u!222 &171601598
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2282,8 +2281,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6716e7c906fd0684c87361a1fb32e4c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputField: {fileID: 747667604}
-  input: 0
 --- !u!114 &747667602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3414,8 +3411,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6716e7c906fd0684c87361a1fb32e4c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputField: {fileID: 1018647951}
-  input: 0
 --- !u!1 &1045260520
 GameObject:
   m_ObjectHideFlags: 0
@@ -3656,7 +3651,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 133210090}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: CreatePiece
+        m_MethodName: CreateObject
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5056,8 +5051,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6716e7c906fd0684c87361a1fb32e4c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputField: {fileID: 1518274764}
-  input: 0
 --- !u!1 &1560952463
 GameObject:
   m_ObjectHideFlags: 0

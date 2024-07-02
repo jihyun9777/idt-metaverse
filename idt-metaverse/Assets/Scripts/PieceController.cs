@@ -5,88 +5,39 @@ using UnityEngine;
 public class PieceController : MonoBehaviour
 {
     private Vector3 offset;
-    private Vector3 originalPosition;
-    private bool placed = false;
+    public bool placed = false;
     HashSet<TileController> occupiedTiles = new HashSet<TileController>();
-    private GameManager gameManager;
-
-    #region Unity Methods
-
-    void Start()
-    {
-        originalPosition = transform.position;
-        gameManager = FindObjectOfType<GameManager>();
-    }
-
-    void Update()
-    {
-        
-    }
-
-    #endregion
 
     #region Mouse Drag
 
-    // void OnMouseDown()
-    // {
-    //     Vector3 mousePos = GetMouseWorldPosition();
-    //     offset = transform.position - new Vector3(mousePos.x, 0f, mousePos.z);
-
-    //     if (placed)
-    //     {
-    //         ResetTilesToFloor();
-    //         placed = false;
-    //     }
-
-    // }
-
-    // void OnMouseDrag()
-    // {
-    //     Vector3 mousePos = GetMouseWorldPosition();
-    //     transform.position = new Vector3(mousePos.x, 0f, mousePos.z) + offset;
-
-    //     UpdatePanelColors();
-    // }
-
-    // private Vector3 GetMouseWorldPosition()
-    // {
-    //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-    //     if (Physics.Raycast(ray, out RaycastHit hit))
-    //     {
-    //         return hit.point;
-    //     }
-
-    //     return transform.position;
-    // }
-
     void OnMouseDown()
     {
-        offset = transform.position - GetMouseWorldPosition();
+        Vector3 mousePos = GetMouseWorldPosition();
+        offset = transform.position - new Vector3(mousePos.x, 0f, mousePos.z);
 
         if (placed)
         {
             ResetTilesToFloor();
             placed = false;
         }
+
     }
 
     void OnMouseDrag()
     {
-        Vector3 newPos = GetMouseWorldPosition() + offset;
-        transform.position = new Vector3(newPos.x, 0f, newPos.z);
+        Vector3 mousePos = GetMouseWorldPosition();
+        transform.position = new Vector3(mousePos.x, 0f, mousePos.z) + offset;
+
         UpdatePieceColor();
     }
 
     private Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane plane = new Plane(Vector3.up, new Vector3(0, 0f, 0));
 
-        float distance;
-        if (plane.Raycast(ray, out distance))
+        if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            return ray.GetPoint(distance);
+            return hit.point;
         }
 
         return transform.position;
@@ -96,7 +47,7 @@ public class PieceController : MonoBehaviour
 
     #region Locate Piece
     
-    void OnMouseUp()
+    public void OnMouseUp()
     {
         bool canPlacePiece = true;
 
@@ -123,59 +74,25 @@ public class PieceController : MonoBehaviour
         }
         occupiedTiles.Clear();
 
-        //If all tiles are Floor state
+        //If all tiles are Floor state, locate each panel
         if (canPlacePiece)
         {
-            PlacePiece();
+            foreach (Transform panel in transform)
+            {
+                PanelController panelController = panel.GetComponent<PanelController>();
+                if (panelController != null)
+                {
+                    panelController.LocatePanel();
+                }
+            }
             placed = true;
         }
     }
 
-    private void PlacePiece()
+    public void ResetTilesToFloor()
     {
         foreach (Transform panel in transform)
         {
-            // //Set panel position
-            // Vector3 panelPosition = panel.position;
-            // int x = Mathf.FloorToInt(panelPosition.x);
-            // int y = Mathf.FloorToInt(panelPosition.z);
-
-            // panel.position = new Vector3(x + 0.5f, panel.position.y, y + 0.5f);
-
-            // //Set tiles state to Occupied
-            // int[] center = CurrentGridCoordinate();
-            // gameManager.floorGrid[x + center[0], y + center[1]] = TileState.Occupied;
-
-            PanelController panelController = panel.GetComponent<PanelController>();
-            if (panelController != null)
-            {
-                TileController currentTile = panelController.GetClosestTile();
-                if (currentTile != null)
-                {
-                    Vector3 tilePosition = currentTile.transform.position;
-                    panel.position = new Vector3(tilePosition.x, panel.position.y, tilePosition.z);
-                    currentTile.SetTileState(TileState.Occupied);
-
-                    panelController.ResetPanelColor();
-                }
-            }
-        }
-    }
-
-    private void ResetTilesToFloor()
-    {
-        foreach (Transform panel in transform)
-        {
-            // Vector3 panelPosition = panel.position;
-            // int x = Mathf.FloorToInt(panelPosition.x);
-            // int y = Mathf.FloorToInt(panelPosition.z);
-
-            // int[] center = CurrentGridCoordinate();
-
-            // gameManager.floorGrid[x + center[0], y + center[1]] = TileState.Floor;
-
-            // Debug.Log((x + center[0]) + " " + (y + center[1]));
-
             PanelController panelController = panel.GetComponent<PanelController>();
             if (panelController != null)
             {
@@ -188,18 +105,11 @@ public class PieceController : MonoBehaviour
         }
     }
 
-    public int[] CurrentGridCoordinate()
-    {
-        int x = Mathf.FloorToInt(gameManager.gridX / 2f);
-        int y = Mathf.FloorToInt(gameManager.gridY / 2f);
-        return new int[] {x, y};
-    }
-
     #endregion
 
     #region Highlight
 
-    private void UpdatePieceColor()
+    public void UpdatePieceColor()
     {
         bool allOnFloor = true;
         bool anyOnOccupied = false;

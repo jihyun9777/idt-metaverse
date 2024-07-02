@@ -5,16 +5,14 @@ using UnityEngine;
 public class PanelController : MonoBehaviour
 {
     public TileState panelState = TileState.Empty;
-
-    // private Vector3 offset;
     private Dictionary<TileController, int> overlappingTiles = new Dictionary<TileController, int>();
-    // public float fixedYPosition;
-    // private Vector3 originalPosition;
 
     private Color originalColor;
     public Color validColor = Color.green;
     public Color invalidColor = Color.red;
     private Renderer panelRenderer;
+
+    #region Unity Methods
 
     void Start()
     {
@@ -22,76 +20,31 @@ public class PanelController : MonoBehaviour
         originalColor = panelRenderer.material.color;
     }
 
+    #endregion
+
+    #region Locate Panel
+
+    public void LocatePanel()
+    {
+        TileController currentTile = GetClosestTile();
+
+        if (currentTile != null)
+        {
+            if (currentTile.GetTileState() == TileState.Floor)
+            {
+                Vector3 tilePosition = currentTile.transform.position;
+                transform.position = new Vector3(tilePosition.x, 0, tilePosition.z);
+
+                currentTile.SetTileState(TileState.Occupied);
+                ResetPanelColor();
+            }
+        }
+    }
+
     public void SetEmpty()
     {
         panelState = TileState.Empty;
     }
-
-    // #region Mouse Drag
-
-    // void OnMouseDown()
-    // {
-    //     offset = transform.position - GetMouseWorldPosition();
-
-    //     TileController currentTile = GetClosestTile();
-    //     if (currentTile != null)
-    //     {
-    //         currentTile.SetTileState(TileState.Floor);
-    //     }
-    // }
-
-    // void OnMouseDrag()
-    // {
-    //     Vector3 newPos = GetMouseWorldPosition() + offset;
-    //     transform.position = new Vector3(newPos.x, fixedYPosition, newPos.z);
-    //     UpdatePanelColor();
-    // }
-
-    // private Vector3 GetMouseWorldPosition()
-    // {
-    //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    //     Plane plane = new Plane(Vector3.up, new Vector3(0, fixedYPosition, 0));
-
-    //     float distance;
-    //     if (plane.Raycast(ray, out distance))
-    //     {
-    //         return ray.GetPoint(distance);
-    //     }
-
-    //     return transform.position;
-    // }
-
-    // #endregion
-
-    #region Locate Panel
-    
-    // void OnMouseUp()
-    // {
-    //     TileController currentTile = GetClosestTile();
-
-    //     if (currentTile != null)
-    //     {
-    //         //Place panel on a tile (Floor)
-    //         if (currentTile.GetTileState() == TileState.Floor)
-    //         {
-    //             Vector3 tilePosition = currentTile.transform.position;
-    //             transform.position = new Vector3(tilePosition.x, fixedYPosition, tilePosition.z);
-    //             originalPosition = new Vector3(tilePosition.x, fixedYPosition, tilePosition.z);
-
-    //             currentTile.SetTileState(TileState.Occupied);
-    //             SetPanelColor(originalColor);
-    //         }
-    //         //Banning panel to place on an occupied tile
-    //         else if (currentTile.GetTileState() == TileState.Occupied)
-    //         {
-    //             //Reset panel to original position
-    //             transform.position = originalPosition;
-    //             SetPanelColor(originalColor);
-    //         }
-    //     }
-    //     else
-    //         UpdatePanelColor();
-    // }
 
     //Return the closest tile from this panel
     public TileController GetClosestTile()
@@ -153,33 +106,6 @@ public class PanelController : MonoBehaviour
     #endregion
 
     #region Highlight Panel
-
-    // private void UpdatePanelColor()
-    // {
-    //     TileController currentTile = GetClosestTile();
-
-    //     if (currentTile != null)
-    //     {
-    //         TileState tileState = currentTile.GetTileState();
-    //         if (tileState == TileState.Floor)
-    //         {
-    //             panelRenderer.material.color = validColor;
-    //         }
-    //         else if (tileState == TileState.Occupied)
-    //         {
-    //             panelRenderer.material.color = invalidColor;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         panelRenderer.material.color = originalColor;
-    //     }
-    // }
-
-    // private void SetPanelColor(Color color)
-    // {
-    //     panelRenderer.material.color = color;
-    // }
 
     public void SetValidColor()
     {

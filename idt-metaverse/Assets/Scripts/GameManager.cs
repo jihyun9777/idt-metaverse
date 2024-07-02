@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public int tileHeight;
     public bool createMode;
     public bool canCreateTile;
+    public float FixedTileYPosition = -0.505f;
 
     //Integer form of input X and Y
     private int intX = 1;
@@ -43,15 +44,18 @@ public class GameManager : MonoBehaviour
 
     public PieceController pieceController;
     public GameObject piece;
+    private BoxCollider pieceCollider;
 
     private bool pieceXReady = false;
     private bool pieceYReady = false;
     private int pieceCount = 0;
 
-    public float fixedYPosition;
     private Vector3 startPosition;
 
     #endregion
+
+    //임시
+    public GameObject tree;
 
     #region Unity Methods
 
@@ -68,7 +72,7 @@ public class GameManager : MonoBehaviour
 
         #endregion
 
-        startPosition = new Vector3(2f, fixedYPosition, 0f);
+        startPosition = new Vector3(-1, 0f, -1f);
     }
 
     public void Update()
@@ -140,7 +144,7 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < y; j++)
             {
-                Vector3 tilePosition = new Vector3((gridX / 2 + i - gridX / 2 + origin.x), 0, (gridY / 2 + j - gridY / 2 + origin.z));
+                Vector3 tilePosition = new Vector3((gridX / 2 + i - gridX / 2 + origin.x), FixedTileYPosition, (gridY / 2 + j - gridY / 2 + origin.z));
                 GameObject newTile = Instantiate(tile, tilePosition, Quaternion.identity);
                 newTile.transform.SetParent(transform);
 
@@ -210,7 +214,7 @@ public class GameManager : MonoBehaviour
             if (pointX < gridX && pointZ < gridY && floorGrid[pointX, pointZ] == TileState.Empty)
             {
                 //Had to set it this way, since a tile on (50, 50) in floorGrid is actually on (0,0)
-                Vector3 tilePosition = new Vector3(pointX - gridX / 2 + origin.x, 0, pointZ - gridY / 2 + origin.z);
+                Vector3 tilePosition = new Vector3(pointX - gridX / 2 + origin.x, FixedTileYPosition, pointZ - gridY / 2 + origin.z);
 
                 GameObject newTile = Instantiate(tile, tilePosition, Quaternion.identity);
                 newTile.transform.SetParent(transform);
@@ -239,7 +243,7 @@ public class GameManager : MonoBehaviour
 
             if (pointX < gridX && pointZ < gridY && floorGrid[pointX, pointZ] == TileState.Empty)
             {
-                previewTilePosition = new Vector3(pointX - gridX / 2 + origin.x, 0, pointZ - gridY / 2 + origin.z);
+                previewTilePosition = new Vector3(pointX - gridX / 2 + origin.x, FixedTileYPosition, pointZ - gridY / 2 + origin.z);
                 currentPreviewTile.transform.position = previewTilePosition;
                 currentPreviewTile.SetActive(true);
             }
@@ -293,9 +297,9 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
-    #region Create Piece
+    #region Create Object
 
-    public void CreatePiece()
+    private void CreatePiece()
     {
         if (int.TryParse(pieceSizeX.text, out int x))
             pieceXReady = true;
@@ -305,23 +309,62 @@ public class GameManager : MonoBehaviour
         if (pieceXReady && pieceYReady)
         {
             piece = new GameObject("Piece" + pieceCount);
-            piece.AddComponent<BoxCollider>();
-            piece.AddComponent<Rigidbody>().isKinematic = true;
+            pieceCollider = piece.AddComponent<BoxCollider>();
+            pieceCollider.isTrigger = true;
 
             for (int i = 0; i < x; i++)
             {
                 for (int j = 0; j < y; j++)
                 {
                     GameObject newPanel = Instantiate(panel, piece.transform);
-                    Vector3 panelPosition = startPosition + new Vector3(i, 0f, j);
+                    Vector3 panelPosition = startPosition + new Vector3(i, 0, j);
                     newPanel.transform.position = panelPosition;
                 }
             }
 
             piece.AddComponent<PieceController>();
             pieceCount ++;
+
         }
     }
 
+    private void ResizePieceCollider()
+    {
+        if (pieceCollider != null && tree != null)
+        {
+            BoxCollider treeCollider = tree.GetComponent<BoxCollider>();
+            if (treeCollider != null)
+            {
+                pieceCollider.size = treeCollider.size;
+            }
+            else
+            {
+                Debug.LogError("Tree GameObject does not have a BoxCollider component!");
+            }
+        }
+        else
+        {
+            Debug.LogError("Piece Collider or Tree GameObject is not assigned!");
+        }
+    }
+
+    public void CreateObject()
+    {
+        //Call import object function
+        //Find Piece center, and place object
+
+
+
+        CreatePiece();
+        tree.transform.parent = piece.transform;
+        ResizePieceCollider();
+
+        //할일
+        //Object 를 parent 하던 child하던 panel이랑 같이 움직이기
+    }
+
+    //Import object from Drive
+
     #endregion
+
 }
