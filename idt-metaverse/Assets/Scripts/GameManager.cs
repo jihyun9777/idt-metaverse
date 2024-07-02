@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour
 
     private bool pieceXReady = false;
     private bool pieceYReady = false;
+    private int pieceCount = 0;
 
     public float fixedYPosition;
     private Vector3 startPosition;
@@ -303,7 +304,7 @@ public class GameManager : MonoBehaviour
 
         if (pieceXReady && pieceYReady)
         {
-            piece = new GameObject("Piece");
+            piece = new GameObject("Piece" + pieceCount);
             piece.AddComponent<BoxCollider>();
             piece.AddComponent<Rigidbody>().isKinematic = true;
 
@@ -318,6 +319,7 @@ public class GameManager : MonoBehaviour
             }
 
             piece.AddComponent<PieceController>();
+            pieceCount ++;
         }
     }
 

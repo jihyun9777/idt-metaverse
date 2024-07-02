@@ -7,7 +7,7 @@ public class PieceController : MonoBehaviour
     private Vector3 offset;
     private Vector3 originalPosition;
     private bool placed = false;
-
+    HashSet<TileController> occupiedTiles = new HashSet<TileController>();
     private GameManager gameManager;
 
     #region Unity Methods
@@ -27,34 +27,66 @@ public class PieceController : MonoBehaviour
 
     #region Mouse Drag
 
+    // void OnMouseDown()
+    // {
+    //     Vector3 mousePos = GetMouseWorldPosition();
+    //     offset = transform.position - new Vector3(mousePos.x, 0f, mousePos.z);
+
+    //     if (placed)
+    //     {
+    //         ResetTilesToFloor();
+    //         placed = false;
+    //     }
+
+    // }
+
+    // void OnMouseDrag()
+    // {
+    //     Vector3 mousePos = GetMouseWorldPosition();
+    //     transform.position = new Vector3(mousePos.x, 0f, mousePos.z) + offset;
+
+    //     UpdatePanelColors();
+    // }
+
+    // private Vector3 GetMouseWorldPosition()
+    // {
+    //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+    //     if (Physics.Raycast(ray, out RaycastHit hit))
+    //     {
+    //         return hit.point;
+    //     }
+
+    //     return transform.position;
+    // }
+
     void OnMouseDown()
     {
-        Vector3 mousePos = GetMouseWorldPosition();
-        offset = transform.position - new Vector3(mousePos.x, 0f, mousePos.z);
+        offset = transform.position - GetMouseWorldPosition();
 
         if (placed)
         {
             ResetTilesToFloor();
             placed = false;
         }
-
     }
 
     void OnMouseDrag()
     {
-        Vector3 mousePos = GetMouseWorldPosition();
-        transform.position = new Vector3(mousePos.x, 0f, mousePos.z) + offset;
-
-        UpdatePanelColors();
+        Vector3 newPos = GetMouseWorldPosition() + offset;
+        transform.position = new Vector3(newPos.x, 0f, newPos.z);
+        UpdatePieceColor();
     }
 
     private Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane plane = new Plane(Vector3.up, new Vector3(0, 0f, 0));
 
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        float distance;
+        if (plane.Raycast(ray, out distance))
         {
-            return hit.point;
+            return ray.GetPoint(distance);
         }
 
         return transform.position;
@@ -62,7 +94,7 @@ public class PieceController : MonoBehaviour
 
     #endregion
 
-    #region Locate Panel
+    #region Locate Piece
     
     void OnMouseUp()
     {
@@ -78,8 +110,18 @@ public class PieceController : MonoBehaviour
                     canPlacePiece = false;
                     break;
                 }
+
+                //Prevent panels pointing same tile
+                TileController currentTile = panelController.GetClosestTile();
+                if (occupiedTiles.Contains(currentTile))
+                {
+                    canPlacePiece = false;
+                    break;
+                }
+                occupiedTiles.Add(currentTile);
             }
         }
+        occupiedTiles.Clear();
 
         //If all tiles are Floor state
         if (canPlacePiece)
@@ -157,7 +199,7 @@ public class PieceController : MonoBehaviour
 
     #region Highlight
 
-    private void UpdatePanelColors()
+    private void UpdatePieceColor()
     {
         bool allOnFloor = true;
         bool anyOnOccupied = false;
@@ -170,12 +212,22 @@ public class PieceController : MonoBehaviour
                 TileController currentTile = panelController.GetClosestTile();
                 if (currentTile != null)
                 {
+                    //Check Occupied tiles
                     if (currentTile.GetTileState() == TileState.Occupied)
                     {
                         anyOnOccupied = true;
+                        allOnFloor = false;
                         break;
-                    }   
+                    }
+                    //Check multiple pointed tiles
+                    if (occupiedTiles.Contains(currentTile))   
+                    {
+                        allOnFloor = false;
+                        break;
+                    }
+                    occupiedTiles.Add(currentTile);
                 }
+                //Check Empty tiles
                 else
                 {
                     allOnFloor = false;
@@ -183,18 +235,16 @@ public class PieceController : MonoBehaviour
                 }
             }
         }
+        occupiedTiles.Clear();
 
         foreach (Transform panel in transform)
         {
             PanelController panelController = panel.GetComponent<PanelController>();
             if (panelController != null)
             {
-                if (anyOnOccupied)
-                    panelController.SetInvalidColor();
-                else if (allOnFloor)    
-                    panelController.SetValidColor();
-                else
-                    panelController.ResetPanelColor();
+                if (anyOnOccupied)  panelController.SetInvalidColor();
+                if (allOnFloor)     panelController.SetValidColor();
+                else                panelController.ResetPanelColor();
             }
         }
     }
