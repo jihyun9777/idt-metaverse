@@ -4,6 +4,106 @@ using UnityEngine;
 
 public class Dummy : MonoBehaviour
 {
+    #region Game manager
+
+    // public void CreateObject()
+    // {
+    //     CreatePiece();
+    //     tree.transform.parent = piece.transform; // tree를 piece의 자식으로 설정
+
+    //     // piece의 BoxCollider를 tree의 BoxCollider 크기에 맞춤
+    //     BoxCollider pieceCollider = piece.GetComponent<BoxCollider>();
+    //     BoxCollider treeCollider = tree.GetComponent<BoxCollider>();
+        
+    //     if (pieceCollider != null && treeCollider != null)
+    //     {
+    //         pieceCollider.size = treeCollider.size;
+    //         pieceCollider.center = treeCollider.center;
+    //     }
+    // }
+
+    #endregion
+
+    #region object
+
+    // void Start()
+    // {
+    //     piece = GetComponentInParent<PieceController>();
+    // }
+
+    // void OnMouseDown()
+    // {
+    //     piece = GetComponentInParent<PieceController>();
+    //     piece.OnMouseDown();
+    // }
+
+    // void OnMouseDrag()
+    // {
+    //     piece.OnMouseDrag();
+    // }
+
+    // void OnMouseUp()
+    // {
+    //     piece.OnMouseUp();
+    // }
+
+    // void Start()
+    // {
+    //     //로직에 따라 선택
+    //     piece = GetComponentInChildren<PieceController>();
+    // }
+
+    // #region Mouse Drag
+
+    // void OnMouseDown()
+    // {
+    //     offset = transform.position - GetMouseWorldPosition();
+
+    //     //로직에 따라 선택
+    //     piece = GetComponentInChildren<PieceController>();
+
+    //     if (piece.placed)
+    //     {
+    //         piece.ResetTilesToFloor();
+    //         piece.placed = false;
+    //     }
+    // }
+
+    // void OnMouseDrag()
+    // {
+    //     Vector3 newPos = GetMouseWorldPosition() + offset;
+    //     transform.position = new Vector3(newPos.x, 0, newPos.z);
+    //     piece.UpdatePieceColor();
+    // }
+
+    // private Vector3 GetMouseWorldPosition()
+    // {
+    //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //     Plane plane = new Plane(Vector3.up, new Vector3(0, 0, 0));
+
+    //     float distance;
+    //     if (plane.Raycast(ray, out distance))
+    //     {
+    //         return ray.GetPoint(distance);
+    //     }
+
+    //     return transform.position;
+    // }
+
+    // #endregion
+
+    // #region Locate Object
+    
+    // void OnMouseUp()
+    // {
+    //     piece.LocatePiece();
+    //     transform.position = piece.piecePosition;
+    // }
+
+    // #endregion
+
+    #endregion
+
     #region piece
 
     // void OnMouseDown()

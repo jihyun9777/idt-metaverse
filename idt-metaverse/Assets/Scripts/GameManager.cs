@@ -72,7 +72,11 @@ public class GameManager : MonoBehaviour
 
         #endregion
 
-        startPosition = new Vector3(-1, 0f, -1f);
+        #region Object Start
+
+        startPosition = new Vector3(0f, 0f, 0f);
+
+        #endregion
     }
 
     public void Update()
@@ -116,6 +120,8 @@ public class GameManager : MonoBehaviour
             currentPreviewTile.SetActive(false);
 
         #endregion
+        //CheckAllFloor();
+        //PrintGrid();
     }
 
     #endregion
@@ -161,7 +167,7 @@ public class GameManager : MonoBehaviour
         }
 
         currentFloor = new Vector2(intX, intY);
-        //PrintGrid();
+        
         AdjustCameraSystemPosition(x, y);
     }
 
@@ -183,10 +189,33 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < gridY; j++)
             {
-                if(floorGrid[i, j] == TileState.Floor)
-                    Debug.Log($"Tile at position ({i}, {j}) is Floor");
+                // if(floorGrid[i, j] == TileState.Floor)
+                //     Debug.Log($"Tile at position ({i}, {j}) is Floor");
+
+                if(floorGrid[i, j] == TileState.Occupied)
+                    Debug.Log($"Tile at position ({i}, {j}) is Occupied");
             }
         }
+    }
+
+    private void CheckAllFloor()
+    {
+        bool allFloor = true;
+
+        for (int i = 0; i < gridX; i++)
+        {
+            for (int j = 0; j < gridY; j++)
+            {
+                if(floorGrid[i, j] == TileState.Occupied)
+                {
+                    allFloor = false;
+                    break;
+                }
+            }
+        }
+
+        if(allFloor)
+            Debug.Log("Floor is clear");
     }
 
     //Set a tile state <empty, occupied, floor>
@@ -299,7 +328,7 @@ public class GameManager : MonoBehaviour
 
     #region Create Object
 
-    private void CreatePiece()
+    public void CreatePiece(Transform parent = null)
     {
         if (int.TryParse(pieceSizeX.text, out int x))
             pieceXReady = true;
@@ -309,8 +338,8 @@ public class GameManager : MonoBehaviour
         if (pieceXReady && pieceYReady)
         {
             piece = new GameObject("Piece" + pieceCount);
-            pieceCollider = piece.AddComponent<BoxCollider>();
-            pieceCollider.isTrigger = true;
+            //piece.AddComponent<BoxCollider>();
+            //piece.AddComponent<Rigidbody>().isKinematic = true;
 
             for (int i = 0; i < x; i++)
             {
@@ -325,26 +354,10 @@ public class GameManager : MonoBehaviour
             piece.AddComponent<PieceController>();
             pieceCount ++;
 
-        }
-    }
-
-    private void ResizePieceCollider()
-    {
-        if (pieceCollider != null && tree != null)
-        {
-            BoxCollider treeCollider = tree.GetComponent<BoxCollider>();
-            if (treeCollider != null)
+            if (parent != null)
             {
-                pieceCollider.size = treeCollider.size;
+                piece.transform.SetParent(parent, true); 
             }
-            else
-            {
-                Debug.LogError("Tree GameObject does not have a BoxCollider component!");
-            }
-        }
-        else
-        {
-            Debug.LogError("Piece Collider or Tree GameObject is not assigned!");
         }
     }
 
@@ -354,13 +367,7 @@ public class GameManager : MonoBehaviour
         //Find Piece center, and place object
 
 
-
-        CreatePiece();
-        tree.transform.parent = piece.transform;
-        ResizePieceCollider();
-
-        //할일
-        //Object 를 parent 하던 child하던 panel이랑 같이 움직이기
+        CreatePiece(tree.transform);
     }
 
     //Import object from Drive

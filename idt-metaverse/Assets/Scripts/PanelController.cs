@@ -24,6 +24,7 @@ public class PanelController : MonoBehaviour
 
     #region Locate Panel
 
+    //Not called on Piece, only when panel moves itself
     public void LocatePanel()
     {
         TileController currentTile = GetClosestTile();
