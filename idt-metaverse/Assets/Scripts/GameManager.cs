@@ -40,12 +40,15 @@ public class GameManager : MonoBehaviour
     //Initialize outside
     public TMP_InputField pieceSizeX;
     public TMP_InputField pieceSizeY;
+    public TMP_InputField FilePath;
     public GameObject panel;
 
     public PieceController pieceController;
     public GameObject piece;
     public GameObject obj;
 
+    private int pieceintX = 1;
+    private int pieceintY = 1;
     private bool pieceXReady = false;
     private bool pieceYReady = false;
     private bool objectReady = false;
@@ -123,17 +126,7 @@ public class GameManager : MonoBehaviour
 
         #region Object Update
 
-        if (int.TryParse(pieceSizeX.text, out int x))
-            pieceXReady = true;
-        if (int.TryParse(pieceSizeY.text, out int y))
-            pieceYReady = true;
-        //Check imported game object
-        if (obj != null)
-            objectReady = true;
-        if (pieceXReady && pieceYReady && objectReady)
-        {
-            CreateObject();
-        }
+        
 
         #endregion
     }
@@ -348,9 +341,9 @@ public class GameManager : MonoBehaviour
         // piece.AddComponent<BoxCollider>();
         // piece.AddComponent<Rigidbody>().isKinematic = true;
 
-        for (int i = 0; i < x; i++)
+        for (int i = 0; i < pieceintX; i++)
         {
-            for (int j = 0; j < y; j++)
+            for (int j = 0; j < pieceintY; j++)
             {
                 GameObject newPanel = Instantiate(panel, piece.transform);
                 Vector3 panelPosition = startPosition + new Vector3(i, 0, j);
@@ -365,20 +358,34 @@ public class GameManager : MonoBehaviour
         {
             piece.transform.SetParent(parent, true); 
         }
-        }
     }
 
     public void CreateObject()
     {
         //Find Piece center, and place object
 
-
-        CreatePiece(tree.transform);
+        CreatePiece(obj.transform);
     }
 
-    private GameObject ImportObject()
+    public void LoadPrefab()
     {
+        
+        
+    }
 
+    public void CreateObjectButton()
+    {
+        if (int.TryParse(pieceSizeX.text, out int x))
+            pieceXReady = true;
+        if (int.TryParse(pieceSizeY.text, out int y))
+            pieceYReady = true;
+        //Check imported game object
+        if (obj != null)
+            objectReady = true;
+        if (pieceXReady && pieceYReady && objectReady)
+        {
+            CreateObject();
+        }
     }
 
     #endregion
