@@ -44,18 +44,16 @@ public class GameManager : MonoBehaviour
 
     public PieceController pieceController;
     public GameObject piece;
-    private BoxCollider pieceCollider;
+    public GameObject obj;
 
     private bool pieceXReady = false;
     private bool pieceYReady = false;
+    private bool objectReady = false;
     private int pieceCount = 0;
 
     private Vector3 startPosition;
 
     #endregion
-
-    //임시
-    public GameObject tree;
 
     #region Unity Methods
 
@@ -122,6 +120,22 @@ public class GameManager : MonoBehaviour
         #endregion
         //CheckAllFloor();
         //PrintGrid();
+
+        #region Object Update
+
+        if (int.TryParse(pieceSizeX.text, out int x))
+            pieceXReady = true;
+        if (int.TryParse(pieceSizeY.text, out int y))
+            pieceYReady = true;
+        //Check imported game object
+        if (obj != null)
+            objectReady = true;
+        if (pieceXReady && pieceYReady && objectReady)
+        {
+            CreateObject();
+        }
+
+        #endregion
     }
 
     #endregion
@@ -330,47 +344,42 @@ public class GameManager : MonoBehaviour
 
     public void CreatePiece(Transform parent = null)
     {
-        if (int.TryParse(pieceSizeX.text, out int x))
-            pieceXReady = true;
-        if (int.TryParse(pieceSizeY.text, out int y))
-            pieceYReady = true;
+        piece = new GameObject("Piece" + pieceCount);
+        // piece.AddComponent<BoxCollider>();
+        // piece.AddComponent<Rigidbody>().isKinematic = true;
 
-        if (pieceXReady && pieceYReady)
+        for (int i = 0; i < x; i++)
         {
-            piece = new GameObject("Piece" + pieceCount);
-            //piece.AddComponent<BoxCollider>();
-            //piece.AddComponent<Rigidbody>().isKinematic = true;
-
-            for (int i = 0; i < x; i++)
+            for (int j = 0; j < y; j++)
             {
-                for (int j = 0; j < y; j++)
-                {
-                    GameObject newPanel = Instantiate(panel, piece.transform);
-                    Vector3 panelPosition = startPosition + new Vector3(i, 0, j);
-                    newPanel.transform.position = panelPosition;
-                }
+                GameObject newPanel = Instantiate(panel, piece.transform);
+                Vector3 panelPosition = startPosition + new Vector3(i, 0, j);
+                newPanel.transform.position = panelPosition;
             }
+        }
 
-            piece.AddComponent<PieceController>();
-            pieceCount ++;
+        piece.AddComponent<PieceController>();
+        pieceCount ++;
 
-            if (parent != null)
-            {
-                piece.transform.SetParent(parent, true); 
-            }
+        if (parent != null)
+        {
+            piece.transform.SetParent(parent, true); 
+        }
         }
     }
 
     public void CreateObject()
     {
-        //Call import object function
         //Find Piece center, and place object
 
 
         CreatePiece(tree.transform);
     }
 
-    //Import object from Drive
+    private GameObject ImportObject()
+    {
+
+    }
 
     #endregion
 

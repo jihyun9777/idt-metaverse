@@ -8,6 +8,8 @@ public class PieceController : MonoBehaviour
     public bool placed = false;
     public Vector3 piecePosition;
     public Vector3 centerPosition;
+    public bool allOnFloor = true;
+    public bool anyOnOccupied = false;
 
     HashSet<TileController> occupiedTiles = new HashSet<TileController>();
 
@@ -134,8 +136,8 @@ public class PieceController : MonoBehaviour
 
     public void UpdatePieceColor()
     {
-        bool allOnFloor = true;
-        bool anyOnOccupied = false;
+        allOnFloor = true;
+        anyOnOccupied = false;
 
         foreach (Transform panel in transform)
         {

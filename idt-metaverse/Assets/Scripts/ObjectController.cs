@@ -67,7 +67,10 @@ public class ObjectController : MonoBehaviour
         piece.LocatePiece();
 
         if(piece.placed)
+        {
             transform.position = new Vector3 (piece.centerPosition.x, 0f, piece.centerPosition.z);
+            objectRenderer.material.color = originalColor;
+        }
     }
 
     #endregion
@@ -78,7 +81,9 @@ public class ObjectController : MonoBehaviour
     {
         piece.UpdatePieceColor();
 
-        
+        if (piece.anyOnOccupied)    objectRenderer.material.color = invalidColor;
+        else if (piece.allOnFloor)  objectRenderer.material.color = validColor;
+        else                        objectRenderer.material.color = originalColor;
     }
 
     #endregion
