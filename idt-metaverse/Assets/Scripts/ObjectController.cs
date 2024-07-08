@@ -68,7 +68,7 @@ public class ObjectController : MonoBehaviour
 
         if(piece.placed)
         {
-            transform.position = new Vector3 (piece.centerPosition.x, 0f, piece.centerPosition.z);
+            transform.position = new Vector3 (piece.tileCenterPosition.x, 0f, piece.tileCenterPosition.z);
             objectRenderer.material.color = originalColor;
         }
     }

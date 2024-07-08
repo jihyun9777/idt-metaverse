@@ -648,11 +648,12 @@ MonoBehaviour:
   FixedTileYPosition: -0.505
   pieceSizeX: {fileID: 747667604}
   pieceSizeY: {fileID: 171601594}
-  FilePath: {fileID: 1204954183}
+  FileName: {fileID: 1204954183}
   panel: {fileID: 7257443238545854309, guid: 26530f2680b9f614983b259368667911, type: 3}
-  pieceController: {fileID: 0}
   piece: {fileID: 0}
+  pieceController: {fileID: 0}
   obj: {fileID: 0}
+  ObjectController: {fileID: 0}
   cameraSystem: {fileID: 1825954417}
 --- !u!1 &134733787
 GameObject:
@@ -4235,14 +4236,14 @@ MonoBehaviour:
   m_VerticalScrollbarEventHandler: {fileID: 0}
   m_LayoutGroup: {fileID: 0}
   m_ScrollSensitivity: 1
-  m_ContentType: 2
+  m_ContentType: 0
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 0
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
-  m_CharacterValidation: 2
+  m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 14
   m_CharacterLimit: 5
@@ -4401,7 +4402,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: Enter file name...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6168,8 +6169,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 133210090}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: LoadPrefab
-        m_Mode: 5
+        m_MethodName: LoadPrefabButton
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

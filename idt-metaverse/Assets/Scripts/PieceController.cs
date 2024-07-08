@@ -7,7 +7,7 @@ public class PieceController : MonoBehaviour
     //private Vector3 offset;
     public bool placed = false;
     public Vector3 piecePosition;
-    public Vector3 centerPosition;
+    public Vector3 tileCenterPosition;
     public bool allOnFloor = true;
     public bool anyOnOccupied = false;
 
@@ -78,8 +78,8 @@ public class PieceController : MonoBehaviour
                 occupiedTiles.Add(currentTile);
 
                 // Update the minimum position
-                piecePosition = new Vector3( Mathf.Min(piecePosition.x, currentTile.transform.position.x), 0f, 
-                                                Mathf.Min(piecePosition.z, currentTile.transform.position.z));
+                //piecePosition = new Vector3( Mathf.Min(piecePosition.x, currentTile.transform.position.x), 0f, 
+                                                //Mathf.Min(piecePosition.z, currentTile.transform.position.z));
             }
         }
         occupiedTiles.Clear();
@@ -108,10 +108,22 @@ public class PieceController : MonoBehaviour
                 }
             }
 
-            centerPosition = (minPosition + maxPosition) / 2f;
-            Debug.Log("CenterPostion" + centerPosition);
+            tileCenterPosition = (minPosition + maxPosition) / 2f;
+            Debug.Log("CenterPostion" + tileCenterPosition);
             placed = true;
         }
+    }
+
+    public Vector3 PieceCenterPosition()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        Bounds bounds = new Bounds(renderers[0].bounds.center, Vector3.zero);
+        foreach (Renderer renderer in renderers)
+        {
+            bounds.Encapsulate(renderer.bounds);
+        }
+
+        return bounds.center;
     }
 
     public void ResetTilesToFloor()

@@ -40,19 +40,19 @@ public class GameManager : MonoBehaviour
     //Initialize outside
     public TMP_InputField pieceSizeX;
     public TMP_InputField pieceSizeY;
-    public TMP_InputField FilePath;
+    public TMP_InputField FileName;
     public GameObject panel;
 
-    public PieceController pieceController;
     public GameObject piece;
+    public PieceController pieceController;
     public GameObject obj;
+    public ObjectController ObjectController;
 
     private int pieceintX = 1;
     private int pieceintY = 1;
     private bool pieceXReady = false;
     private bool pieceYReady = false;
     private bool objectReady = false;
-    private int pieceCount = 0;
 
     private Vector3 startPosition;
 
@@ -335,9 +335,55 @@ public class GameManager : MonoBehaviour
 
     #region Create Object
 
-    public void CreatePiece(Transform parent = null)
+    //When Load Object Button is pressed
+    public void LoadPrefabButton()
     {
-        piece = new GameObject("Piece" + pieceCount);
+        GameObject file = Resources.Load<GameObject>(FileName.text);
+
+        if (file != null)
+        {
+            obj = Instantiate(file, Vector3.zero, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogError($"Failed to load prefab from Resources folder: {FileName}");
+        }
+    }
+
+    //When Add Object Button is pressed
+    public void CreateObjectButton()
+    {
+        if (int.TryParse(pieceSizeX.text, out pieceintX))
+            pieceXReady = true;
+        if (int.TryParse(pieceSizeY.text, out pieceintY))
+            pieceYReady = true;
+        //Check imported game object
+        if (obj != null)
+            objectReady = true;
+        if (pieceXReady && pieceYReady && objectReady)
+        {
+            CreateObject();
+        }
+    }
+
+    private void CreateObject()
+    {
+        CreatePiece();
+
+        //Place Object on the center of Piece
+        Vector3 pieceCenter = pieceController.PieceCenterPosition();
+        obj.transform.position = new Vector3(pieceCenter.x, 0, pieceCenter.z);
+
+        piece.transform.SetParent(obj.transform, true); 
+
+        obj.AddComponent<BoxCollider>();
+        obj.AddComponent<Rigidbody>().isKinematic = true;
+        ObjectController = obj.AddComponent<ObjectController>();
+    }
+
+    private void CreatePiece()
+    {
+        piece = new GameObject("Piece");
         // piece.AddComponent<BoxCollider>();
         // piece.AddComponent<Rigidbody>().isKinematic = true;
 
@@ -351,41 +397,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        piece.AddComponent<PieceController>();
-        pieceCount ++;
-
-        if (parent != null)
-        {
-            piece.transform.SetParent(parent, true); 
-        }
-    }
-
-    public void CreateObject()
-    {
-        //Find Piece center, and place object
-
-        CreatePiece(obj.transform);
-    }
-
-    public void LoadPrefab()
-    {
-        
-        
-    }
-
-    public void CreateObjectButton()
-    {
-        if (int.TryParse(pieceSizeX.text, out int x))
-            pieceXReady = true;
-        if (int.TryParse(pieceSizeY.text, out int y))
-            pieceYReady = true;
-        //Check imported game object
-        if (obj != null)
-            objectReady = true;
-        if (pieceXReady && pieceYReady && objectReady)
-        {
-            CreateObject();
-        }
+        pieceController = piece.AddComponent<PieceController>();
     }
 
     #endregion
