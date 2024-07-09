@@ -375,6 +375,7 @@
 "Assets/OBJImport/TextureLoader/TGALoader.cs"
 "Assets/Scripts/CameraSystem.cs"
 "Assets/Scripts/CreateModeButtonController.cs"
+"Assets/Scripts/CreateObjectController.cs"
 "Assets/Scripts/Dummy.cs"
 "Assets/Scripts/GameManager.cs"
 "Assets/Scripts/ObjectController.cs"
