@@ -343,6 +343,7 @@ public class GameManager : MonoBehaviour
         if (file != null)
         {
             obj = Instantiate(file, Vector3.zero, Quaternion.identity);
+            Debug.Log(obj.transform.position);
         }
         else
         {
@@ -373,10 +374,12 @@ public class GameManager : MonoBehaviour
         //Place Object on the center of Piece
         Vector3 pieceCenter = pieceController.PieceCenterPosition();
         obj.transform.position = new Vector3(pieceCenter.x, 0, pieceCenter.z);
+        Debug.Log(obj.transform.position);
 
         piece.transform.SetParent(obj.transform, true); 
 
         obj.AddComponent<BoxCollider>();
+        obj.AddComponent<MeshRenderer>();
         obj.AddComponent<Rigidbody>().isKinematic = true;
         ObjectController = obj.AddComponent<ObjectController>();
     }

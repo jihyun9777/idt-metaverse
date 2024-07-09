@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using TMPro;
 
 public class CameraSystem : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class CameraSystem : MonoBehaviour
     [SerializeField] private bool useDragPan = false;
     [SerializeField] private float fieldOfViewMax = 100;
     [SerializeField] private float fieldOfViewMin = 0;
+    [SerializeField] public TMP_InputField FileName;
     
     private bool dragPanMoveActive;
     private Vector2 lastMousePosition;
@@ -17,13 +19,16 @@ public class CameraSystem : MonoBehaviour
 
     private void Update()
     {
-        HandleCameraMovement();
-        HandleCameraRotation();
-        //HandleCameraDragRotation();
+        if (!FileName.isFocused)
+        {
+            HandleCameraMovement();
+            HandleCameraRotation();
+            //HandleCameraDragRotation();
 
-        if(useEdgeScrolling) HandleCameraEdgeScrolling();
-        if(useDragPan) HandleCameraDragPan();
-        HandleCameraZoom();
+            if(useEdgeScrolling) HandleCameraEdgeScrolling();
+            if(useDragPan) HandleCameraDragPan();
+            HandleCameraZoom();
+        }
     }
 
     private void HandleCameraMovement() 

@@ -12,6 +12,8 @@ public class ObjectController : MonoBehaviour
     public Color invalidColor = Color.red;
     private Renderer objectRenderer;
 
+    public bool rotatable = false;
+
     #region Unity Methods
 
     void Start()
@@ -35,6 +37,11 @@ public class ObjectController : MonoBehaviour
             piece.ResetTilesToFloor();
             piece.placed = false;
         }
+
+        rotatable = !rotatable;
+
+        if(rotatable)
+            RotateObject();
     }
 
     void OnMouseDrag()
@@ -84,6 +91,15 @@ public class ObjectController : MonoBehaviour
         if (piece.anyOnOccupied)    objectRenderer.material.color = invalidColor;
         else if (piece.allOnFloor)  objectRenderer.material.color = validColor;
         else                        objectRenderer.material.color = originalColor;
+    }
+
+    #endregion
+
+    #region Rotate Object
+
+    private void RotateObject()
+    {
+        
     }
 
     #endregion
