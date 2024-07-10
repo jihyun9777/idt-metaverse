@@ -79,6 +79,13 @@ public class GameManager : MonoBehaviour
         startPosition = new Vector3(0f, 0f, 0f);
 
         #endregion
+    
+        string objectName = PlayerPrefs.GetString("ObjectName", "");
+
+        if (!string.IsNullOrEmpty(objectName))
+        {
+            obj = GameObject.Find(objectName);
+        }
     }
 
     public void Update()
@@ -379,10 +386,23 @@ public class GameManager : MonoBehaviour
 
         piece.transform.SetParent(obj.transform, true); 
 
-        obj.AddComponent<BoxCollider>();
-        obj.AddComponent<MeshRenderer>();
+        BoxCollider boxCollider = obj.AddComponent<BoxCollider>();
         obj.AddComponent<Rigidbody>().isKinematic = true;
+        obj.AddComponent<MeshRenderer>();
         ObjectController = obj.AddComponent<ObjectController>();
+        
+        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+
+        if (renderers.Length > 0)
+        {
+            Bounds bounds = renderers[0].bounds;
+
+            foreach (Renderer renderer in renderers)
+                bounds.Encapsulate(renderer.bounds);
+
+            boxCollider.size = bounds.size;
+            boxCollider.center = bounds.center - obj.transform.position;
+        }
     }
 
     private void CreatePiece()
