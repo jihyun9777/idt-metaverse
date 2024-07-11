@@ -35,8 +35,9 @@ public class GameManager : MonoBehaviour
     private Vector3 previewTilePosition;
 
     public TileState[,] floorGrid;
+
     #endregion
-    #region Piece Variables
+    #region Object Variables
 
     //Initialize outside
     public TMP_InputField pieceSizeX;
@@ -47,7 +48,6 @@ public class GameManager : MonoBehaviour
     public GameObject piece;
     public PieceController pieceController;
     public GameObject obj;
-    public ObjectController ObjectController;
 
     private int pieceintX = 1;
     private int pieceintY = 1;
@@ -56,6 +56,13 @@ public class GameManager : MonoBehaviour
     private bool objectReady = false;
 
     private Vector3 startPosition;
+
+    #endregion
+    #region Load Object
+
+    public OpenFile openFileScript;
+    public TMP_InputField scale;
+    private float scaleNum;
 
     #endregion
 
@@ -73,19 +80,21 @@ public class GameManager : MonoBehaviour
         CreateFloor(intX, intY);
 
         #endregion
-
         #region Object Start
 
         startPosition = new Vector3(0f, 0f, 0f);
 
         #endregion
-    
+        #region Load Start
+        //Load from Resource folder
         string objectName = PlayerPrefs.GetString("ObjectName", "");
 
         if (!string.IsNullOrEmpty(objectName))
         {
             obj = GameObject.Find(objectName);
         }
+
+        #endregion
     }
 
     public void Update()
@@ -131,10 +140,8 @@ public class GameManager : MonoBehaviour
         #endregion
         //CheckAllFloor();
         //PrintGrid();
+        #region Load Object
 
-        #region Object Update
-
-        
 
         #endregion
     }
@@ -343,25 +350,22 @@ public class GameManager : MonoBehaviour
 
     #region Create Object
 
-    //When Load Object Button is pressed
-    public void LoadPrefabButton()
-    {
-        GameObject file = Resources.Load<GameObject>(FileName.text);
-
-        if (file != null)
-        {
-            obj = Instantiate(file, Vector3.zero, Quaternion.identity);
-            Debug.Log(obj.transform.position);
-        }
-        else
-        {
-            Debug.LogError($"Failed to load prefab from Resources folder: {FileName}");
-        }
-    }
-
     //When Add Object Button is pressed
     public void CreateObjectButton()
     {
+        //If piece is already created, destroy piece
+        if (piece != null)
+        {
+            for (int i = obj.transform.childCount - 1; i >= 0; i--)
+            {
+                Transform child = obj.transform.GetChild(i);
+                if (child.name == "Piece")
+                {
+                    DestroyImmediate(child.gameObject);
+                }
+            }
+        }
+
         if (int.TryParse(pieceSizeX.text, out pieceintX))
             pieceXReady = true;
         if (int.TryParse(pieceSizeY.text, out pieceintY))
@@ -384,13 +388,18 @@ public class GameManager : MonoBehaviour
         obj.transform.position = new Vector3(pieceCenter.x, 0, pieceCenter.z);
         Debug.Log(obj.transform.position);
 
+        //Set Piece as child of Object
         piece.transform.SetParent(obj.transform, true); 
 
-        BoxCollider boxCollider = obj.AddComponent<BoxCollider>();
-        obj.AddComponent<Rigidbody>().isKinematic = true;
-        obj.AddComponent<MeshRenderer>();
-        ObjectController = obj.AddComponent<ObjectController>();
+        //Add Componenets to Object if needed
+        if (obj.GetComponent<Rigidbody>() == null)          obj.AddComponent<Rigidbody>().isKinematic = true;
+        if (obj.GetComponent<MeshRenderer>() == null)       obj.AddComponent<MeshRenderer>();
+        if (obj.GetComponent<ObjectController>() == null)   obj.AddComponent<ObjectController>();
         
+        //Recreate BoxCollider
+        Destroy(obj.GetComponent<BoxCollider>());
+        BoxCollider boxCollider = obj.AddComponent<BoxCollider>();
+
         Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
 
         if (renderers.Length > 0)
@@ -400,8 +409,20 @@ public class GameManager : MonoBehaviour
             foreach (Renderer renderer in renderers)
                 bounds.Encapsulate(renderer.bounds);
 
-            boxCollider.size = bounds.size;
-            boxCollider.center = bounds.center - obj.transform.position;
+            // Calculate adjusted size considering scale
+            Vector3 inverseScale = new Vector3(1f / obj.transform.localScale.x, 1f / obj.transform.localScale.y, 1f / obj.transform.localScale.z);
+            Vector3 adjustedSize = Vector3.Scale(bounds.size, inverseScale);
+
+            boxCollider.size = adjustedSize;
+
+            // Calculate center position relative to object's transform position
+            Vector3 centerOffset = bounds.center - obj.transform.position;
+
+            // Adjust center of BoxCollider to be at the object's pivot (assuming pivot is at bottom center)
+            boxCollider.center = new Vector3(centerOffset.x, adjustedSize.y / 2f, centerOffset.z);
+
+            Debug.Log("Adjusted BoxCollider size: " + boxCollider.size);
+            Debug.Log("Adjusted BoxCollider center: " + boxCollider.center);
         }
     }
 
@@ -426,8 +447,41 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    #region Load Object
+
     public void LoadCreateObjectScene()
     {
         SceneManager.LoadScene("CreateObjectScene");
     }
+
+    //When Load Object Button is pressed
+    public void LoadPrefabButton()
+    {
+        GameObject file = Resources.Load<GameObject>(FileName.text);
+
+        if (file != null)
+        {
+            obj = Instantiate(file, Vector3.zero, Quaternion.identity);
+            Debug.Log(obj.transform.position);
+        }
+        else
+        {
+            openFileScript.OnClickOpen((loadedObj) =>
+            {
+                obj = loadedObj;
+                
+            });
+        }
+    }
+
+    public void SetObjectScale()
+    {
+        if (float.TryParse(scale.text, out scaleNum))
+        {
+            if (obj != null)
+                obj.transform.localScale = new Vector3(scaleNum, scaleNum, scaleNum);
+        }
+    }
+
+    #endregion
 }
