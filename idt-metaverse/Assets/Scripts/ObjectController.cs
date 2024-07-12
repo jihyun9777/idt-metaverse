@@ -5,6 +5,7 @@ using UnityEngine;
 public class ObjectController : MonoBehaviour
 {
     private Vector3 offset;
+    private Vector3 pivotOffset;
     private PieceController piece;
 
     private Color originalColor;
@@ -12,10 +13,14 @@ public class ObjectController : MonoBehaviour
     public Color invalidColor = Color.red;
     private Renderer objectRenderer;
 
+    private GameManager gameManager;
+
     #region Unity Methods
 
     void Start()
     {
+        gameManager = FindObjectOfType<GameManager>();
+        pivotOffset = gameManager.CalculatePivotOffset(gameObject);
         objectRenderer = GetComponent<Renderer>(); 
         originalColor = objectRenderer.material.color;
     }
@@ -39,8 +44,9 @@ public class ObjectController : MonoBehaviour
 
     void OnMouseDrag()
     {
+        Debug.Log("pivotoffset: " + pivotOffset);
         Vector3 newPos = GetMouseWorldPosition() + offset;
-        transform.position = new Vector3(newPos.x, 0, newPos.z);
+        transform.position = new Vector3(newPos.x - pivotOffset.x, 0 - pivotOffset.y, newPos.z - pivotOffset.z);
         UpdateObjectColor();
     }
 
@@ -68,7 +74,7 @@ public class ObjectController : MonoBehaviour
 
         if(piece.placed)
         {
-            transform.position = new Vector3 (piece.tileCenterPosition.x, 0f, piece.tileCenterPosition.z);
+            transform.position = new Vector3 (piece.tileCenterPosition.x - pivotOffset.x, 0f - pivotOffset.y, piece.tileCenterPosition.z - pivotOffset.z);
             objectRenderer.material.color = originalColor;
         }
     }

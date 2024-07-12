@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour
     public OpenFile openFileScript;
     public TMP_InputField scale;
     private float scaleNum;
+    public Vector3 pivotOffset;
 
     #endregion
 
@@ -346,6 +347,27 @@ public class GameManager : MonoBehaviour
         cameraSystem.transform.position = new Vector3(centerPosition.x, distance, centerPosition.z - distance);
     }
 
+    private void AdjustCameraSystemPosition()
+    {
+        if (obj == null) return;
+
+        // Get the bounds of the loaded object
+        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0) return;
+
+        Bounds bounds = renderers[0].bounds;
+        foreach (Renderer renderer in renderers)
+            bounds.Encapsulate(renderer.bounds);
+
+        float objectWidth = bounds.size.x;
+        float objectHeight = bounds.size.z;
+        Vector3 centerPosition = bounds.center;
+
+        // Calculate distance of camera
+        float distance = Mathf.Max(objectWidth, objectHeight) * 1f; 
+        cameraSystem.transform.position = new Vector3(centerPosition.x, distance, centerPosition.z - distance);
+    }
+
     #endregion
 
     #region Create Object
@@ -385,7 +407,7 @@ public class GameManager : MonoBehaviour
 
         //Place Object on the center of Piece
         Vector3 pieceCenter = pieceController.PieceCenterPosition();
-        obj.transform.position = new Vector3(pieceCenter.x, 0, pieceCenter.z);
+        obj.transform.position = new Vector3(pieceCenter.x - pivotOffset.x, 0 - pivotOffset.y, pieceCenter.z - pivotOffset.z);
         Debug.Log(obj.transform.position);
 
         //Set Piece as child of Object
@@ -409,20 +431,17 @@ public class GameManager : MonoBehaviour
             foreach (Renderer renderer in renderers)
                 bounds.Encapsulate(renderer.bounds);
 
-            // Calculate adjusted size considering scale
+            //Calculate adjusted size considering scale
             Vector3 inverseScale = new Vector3(1f / obj.transform.localScale.x, 1f / obj.transform.localScale.y, 1f / obj.transform.localScale.z);
             Vector3 adjustedSize = Vector3.Scale(bounds.size, inverseScale);
 
             boxCollider.size = adjustedSize;
 
-            // Calculate center position relative to object's transform position
+            //Calculate center position relative to object's transform position
             Vector3 centerOffset = bounds.center - obj.transform.position;
 
-            // Adjust center of BoxCollider to be at the object's pivot (assuming pivot is at bottom center)
+            //Adjust center of BoxCollider to be at the object's pivot
             boxCollider.center = new Vector3(centerOffset.x, adjustedSize.y / 2f, centerOffset.z);
-
-            Debug.Log("Adjusted BoxCollider size: " + boxCollider.size);
-            Debug.Log("Adjusted BoxCollider center: " + boxCollider.center);
         }
     }
 
@@ -469,7 +488,9 @@ public class GameManager : MonoBehaviour
             openFileScript.OnClickOpen((loadedObj) =>
             {
                 obj = loadedObj;
-                
+                pivotOffset = CalculatePivotOffset(obj);
+                AdjustCameraSystemPosition();
+                LocateAccoringToOffset();
             });
         }
     }
@@ -479,8 +500,43 @@ public class GameManager : MonoBehaviour
         if (float.TryParse(scale.text, out scaleNum))
         {
             if (obj != null)
+            {
                 obj.transform.localScale = new Vector3(scaleNum, scaleNum, scaleNum);
+                pivotOffset = CalculatePivotOffset(obj);
+                AdjustCameraSystemPosition();
+                LocateAccoringToOffset();
+            }
         }
+    }
+
+    public Vector3 CalculatePivotOffset(GameObject obj)
+    {
+        if (obj == null) return Vector3.zero;
+
+        // Get all child renderers
+        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0) return Vector3.zero;
+
+        // Find the minimum y value and bounds center
+        float minY = float.MaxValue;
+        Vector3 boundsCenter = Vector3.zero;
+        foreach (Renderer renderer in renderers)
+        {
+            minY = Mathf.Min(minY, renderer.bounds.min.y);
+            boundsCenter += renderer.bounds.center;
+        }
+        boundsCenter /= renderers.Length;
+
+        // Calculate the offset to move the pivot to the bottom center
+        Vector3 pivotOffset = new Vector3(boundsCenter.x, minY, boundsCenter.z) - obj.transform.position;
+
+        return pivotOffset;
+    }
+
+    private void LocateAccoringToOffset()
+    {
+        obj.transform.position = new Vector3(obj.transform.position.x - pivotOffset.x, 
+                                            obj.transform.position.y - pivotOffset.y, obj.transform.position.z - pivotOffset.z);
     }
 
     #endregion
