@@ -23,6 +23,7 @@ public class ObjectController : MonoBehaviour
         pivotOffset = gameManager.CalculatePivotOffset(gameObject);
         objectRenderer = GetComponent<Renderer>(); 
         originalColor = objectRenderer.material.color;
+        
     }
 
     #endregion
@@ -45,8 +46,8 @@ public class ObjectController : MonoBehaviour
     void OnMouseDrag()
     {
         Debug.Log("pivotoffset: " + pivotOffset);
-        Vector3 newPos = GetMouseWorldPosition() + offset;
-        transform.position = new Vector3(newPos.x - pivotOffset.x, 0 - pivotOffset.y, newPos.z - pivotOffset.z);
+        Vector3 newPos = GetMouseWorldPosition() + offset - pivotOffset;
+        transform.position = newPos;
         UpdateObjectColor();
     }
 

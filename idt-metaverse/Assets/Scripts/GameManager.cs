@@ -408,7 +408,6 @@ public class GameManager : MonoBehaviour
         //Place Object on the center of Piece
         Vector3 pieceCenter = pieceController.PieceCenterPosition();
         obj.transform.position = new Vector3(pieceCenter.x - pivotOffset.x, 0 - pivotOffset.y, pieceCenter.z - pivotOffset.z);
-        Debug.Log(obj.transform.position);
 
         //Set Piece as child of Object
         piece.transform.SetParent(obj.transform, true); 
@@ -433,15 +432,20 @@ public class GameManager : MonoBehaviour
 
             //Calculate adjusted size considering scale
             Vector3 inverseScale = new Vector3(1f / obj.transform.localScale.x, 1f / obj.transform.localScale.y, 1f / obj.transform.localScale.z);
-            Vector3 adjustedSize = Vector3.Scale(bounds.size, inverseScale);
-
-            boxCollider.size = adjustedSize;
+            boxCollider.size = Vector3.Scale(bounds.size, inverseScale);
 
             //Calculate center position relative to object's transform position
             Vector3 centerOffset = bounds.center - obj.transform.position;
 
             //Adjust center of BoxCollider to be at the object's pivot
-            boxCollider.center = new Vector3(centerOffset.x, adjustedSize.y / 2f, centerOffset.z);
+            // boxCollider.center = new Vector3(centerOffset.x, boxCollider.size.y / 2f, centerOffset.z);
+            // Debug.Log("BoxCollider size: " + boxCollider.center);
+
+            Vector3 scaledPivotOffset = Vector3.Scale(pivotOffset, inverseScale);
+            Debug.Log(scaledPivotOffset);
+
+            boxCollider.center = new Vector3(centerOffset.x + scaledPivotOffset.x, boxCollider.size.y / 2f, centerOffset.z + scaledPivotOffset.z);
+            Debug.Log("Adjusted BoxCollider size: " + boxCollider.center);
         }
     }
 
