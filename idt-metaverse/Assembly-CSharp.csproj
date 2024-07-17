@@ -93,6 +93,7 @@
     <Compile Include="Assets\OBJImport\TextureLoader\BMPLoader.cs" />
     <Compile Include="Assets\OBJImport\TextureLoader\BinaryExtensions.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
+    <Compile Include="Assets\Scripts\InfoNetworking.cs" />
     <Compile Include="Assets\OBJImport\Samples\ObjFromStream.cs" />
     <Compile Include="Assets\Scripts\TileController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />

@@ -380,6 +380,7 @@
 "Assets/Scripts/CreateObjectController.cs"
 "Assets/Scripts/Dummy.cs"
 "Assets/Scripts/GameManager.cs"
+"Assets/Scripts/InfoNetworking.cs"
 "Assets/Scripts/ObjectController.cs"
 "Assets/Scripts/OpenFile.cs"
 "Assets/Scripts/PanelController.cs"
