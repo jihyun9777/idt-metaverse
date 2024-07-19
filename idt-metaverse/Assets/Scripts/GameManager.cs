@@ -66,6 +66,13 @@ public class GameManager : MonoBehaviour
     public Vector3 pivotOffset;
 
     #endregion
+    #region Networking
+
+    public InfoNetworking networkingScript;
+    //Get Input from user later
+    public string fileName = "Sample1.obj";
+
+    #endregion
 
     #region Unity Methods
 
@@ -96,6 +103,7 @@ public class GameManager : MonoBehaviour
         }
 
         #endregion
+
     }
 
     public void Update()
@@ -541,6 +549,32 @@ public class GameManager : MonoBehaviour
     {
         obj.transform.position = new Vector3(obj.transform.position.x - pivotOffset.x, 
                                             obj.transform.position.y - pivotOffset.y, obj.transform.position.z - pivotOffset.z);
+    }
+
+    #endregion
+
+    #region Networking
+
+    public void DownloadObject()
+    {
+        if (string.IsNullOrEmpty(fileName))
+        {
+            Debug.LogError("FileName is not set in GameManager.");
+            return;
+        }
+
+         StartCoroutine(networkingScript.DownloadOBJ(fileName, OnObjectDownloaded));
+    }
+
+    private void OnObjectDownloaded(GameObject downloadedObj)
+    {
+        if (downloadedObj == null)
+        {
+            Debug.LogError("Failed to load the object.");
+            return;
+        }
+
+        obj = downloadedObj;
     }
 
     #endregion
