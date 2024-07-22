@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638572078032205890
-    m_Hash: 1475936384
+      ticks: 638572294390370024
+    m_Hash: 4031049073
   m_LockFileStatus:
     m_FilePath: C:/Users/KETI/Documents/GitHub/idt-metaverse/idt-metaverse/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638572078032271036
-    m_Hash: 2848391347
+      ticks: 638572294433160493
+    m_Hash: 349493691
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:

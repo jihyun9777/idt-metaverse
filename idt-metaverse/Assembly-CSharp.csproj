@@ -132,6 +132,7 @@
     <Compile Include="Assets\OBJImport\TextureLoader\DDSLoader.cs" />
     <Compile Include="Assets\Scripts\PanelController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
+    <Compile Include="Assets\Scripts\SpaceController.cs" />
     <Compile Include="Assets\OBJImport\MTLLoader.cs" />
     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserEditor.cs" />
     <Compile Include="Assets\OBJImport\TextureLoader\ImageLoader.cs" />

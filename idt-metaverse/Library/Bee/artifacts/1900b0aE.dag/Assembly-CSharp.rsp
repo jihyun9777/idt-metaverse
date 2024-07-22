@@ -386,6 +386,7 @@
 "Assets/Scripts/OpenFile.cs"
 "Assets/Scripts/PanelController.cs"
 "Assets/Scripts/PieceController.cs"
+"Assets/Scripts/SpaceController.cs"
 "Assets/Scripts/TileController.cs"
 "Assets/Scripts/TileState.cs"
 "Assets/StandaloneFileBrowser/IStandaloneFileBrowser.cs"
