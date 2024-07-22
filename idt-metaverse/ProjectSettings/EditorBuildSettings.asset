@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CreateObjectScene.unity
     guid: eb342e84df1656d4d8c760d8e1b949fd
+  - enabled: 1
+    path: Assets/Scenes/SpaceMenuScene.unity
+    guid: 733042ba8f2d6c742af3046486120ece
+  - enabled: 1
+    path: Assets/Scenes/CreateSpaceScene.unity
+    guid: b5f031a57e878484f850efafde03185f
   m_configObjects: {}
