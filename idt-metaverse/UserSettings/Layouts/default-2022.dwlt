@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2560
     height: 1349.3334
   m_ShowMode: 4
-  m_Title: Console
+  m_Title: Project
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 50}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 56
+  controlID: 31
   draggingID: 0
 --- !u!114 &10
 MonoBehaviour:
@@ -810,9 +810,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 382, y: 1047, z: 0}
+    m_Target: {x: 960, y: 540, z: 0.000015258789}
     speed: 2
-    m_Value: {x: 382.00076, y: 1046.9994, z: 2.0008883e-11}
+    m_Value: {x: 960, y: 540, z: 0.000015258789}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -862,9 +862,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 108.99029
+    m_Target: 408.7704
     speed: 2
-    m_Value: 104.29693
+    m_Value: 408.7704
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1060,9 +1060,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: c8600000
+      m_SelectedIDs: b6600000
       m_LastClickedID: 0
-      m_ExpandedIDs: 267dffff4c7effffd484ffffce86ffffbc87ffffa088ffff9e89ffff548bffffc88bffff0a8dffff2490ffffc290ffff1291ffff9091ffff3892ffffbe92fffff094ffffd697ffff7498ffff7a9affff549bffff969dffff049effff72a0ffffa0a2ffff8ca3ffff5ea5fffff0a5ffffbaa6fffffea7ffff56aafffff8adffff50aeffffa8aeffff14afffff04b0ffff5cb0ffffbcb0ffff4ab1ffff8ab3ffff52deffff02e2ffff0cfbffff665d0000705d0000be630000c8630000e463000016640000526400006c640000da6f00005870000080700000ea7c0000807d0000e47e00001c7f0000fa980000aa990000f0990000fa9a0000249b0000f09b0000369c00006a9d0000
+      m_ExpandedIDs: 5cf4feffe0fdfeff8802ffff4403ffff6209ffff821affff101bffff7c1bffff241cffff581dffff0a6effff8c6effffdc81ffffd89fffff34a0ffffdaa2ffff84a7ffffbaaaffff8aaeffffacb1ffff9acdffff90ceffff60d6ffffd8d6ffffe6d7ffffb8d8ffff5ed9ffff38daffffd2daffff7adeffff58e1ffff12e2ffff6ae8ffffa2f4ffff10f9ffffcafaffffd66000004a6100000c6c0000a06c000090720000a273000044750000067600005a77000090780000947800000e79000054790000ac7a00003a7b00000a7c0000047d00009485000096860000ea8e0000369000001c940000b29400001696000024960000229900002c990000a4b9000026ba000078ba00007ebc000062bd000074c40000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1131,7 +1131,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts
+    - Assets/Scenes
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -1139,16 +1139,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scripts
+  - Assets/Scenes
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\KETI\Documents\GitHub\idt-metaverse\idt-metaverse
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 9a600000
-    m_LastClickedID: 24730
-    m_ExpandedIDs: 000000006460000066600000686000006a6000006c6000006e6000009c60000000ca9a3bffffff7f
+    m_SelectedIDs: 7e600000
+    m_LastClickedID: 24702
+    m_ExpandedIDs: 00000000486000004a6000004c6000004e60000050600000526000008860000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1176,7 +1176,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000006460000066600000686000006a6000006c6000006e600000
+    m_ExpandedIDs: 00000000486000004a6000004c6000004e600000506000005260000054600000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1220,7 +1220,7 @@ MonoBehaviour:
       m_IsRenaming: 0
       m_OriginalEventType: 11
       m_IsRenamingFilename: 1
-      m_ClientGUIView: {fileID: 15}
+      m_ClientGUIView: {fileID: 8}
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
       m_InstanceID: 0
@@ -1228,7 +1228,7 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 149.99994}
+    m_ScrollPosition: {x: 0, y: 0}
     m_GridSize: 64
   m_SkipHiddenPackages: 0
   m_DirectoriesAreaWidth: 207

@@ -147,12 +147,6 @@ public class GameManager : MonoBehaviour
             currentPreviewTile.SetActive(false);
 
         #endregion
-        //CheckAllFloor();
-        //PrintGrid();
-        #region Load Object
-
-
-        #endregion
     }
 
     #endregion
