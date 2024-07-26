@@ -59,16 +59,46 @@
     <UnityVersion>2022.3.33f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Analyzer Include="C:\Users\KETI\Documents\GitHub\idt-metaverse\idt-metaverse\Assets\Plugins\StandaloneFileBrowser\Plugins\Ookii.Dialogs.dll" />
+    <Analyzer Include="C:\Users\KETI\Documents\GitHub\idt-metaverse\idt-metaverse\Assets\Plugins\StandaloneFileBrowser\Plugins\System.Windows.Forms.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.33f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.33f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Plugins\AnotherFileBrowser\FileBrowser.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\CharWordReader.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\TextureLoader\DDSLoader.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\Sample\CanvasSampleOpenFileTextMultiple.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\TextureLoader\ImageUtils.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\OBJLoaderHelper.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\StandaloneFileBrowser.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\IStandaloneFileBrowser.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\StandaloneFileBrowserWindows.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\TextureLoader\ImageLoaderHelper.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\Sample\CanvasSampleSaveFileImage.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\TextureLoader\ColorExtensions.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\Sample\CanvasSampleOpenFileImage.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\StandaloneFileBrowserLinux.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\StandaloneFileBrowserEditor.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\MTLLoader.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\OBJObjectBuilder.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\Samples\ObjFromStream.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\Sample\CanvasSampleOpenFileText.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\StringExtensions.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\TextureLoader\TGALoader.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\Sample\CanvasSampleSaveFileText.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\StandaloneFileBrowserMac.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\TextureLoader\BinaryExtensions.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\TextureLoader\BMPLoader.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\OBJLoader.cs" />
+    <Compile Include="Assets\Plugins\StandaloneFileBrowser\Sample\BasicSample.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\TextureLoader\ImageLoader.cs" />
+    <Compile Include="Assets\Plugins\OBJImport\Samples\ObjFromFile.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Plugins\AnotherFileBrowser\Plugins\System.Windows.Forms.dll" />
-    <None Include="Assets\Plugins\System.Windows.Forms.dll" />
-    <None Include="Assets\Plugins\AnotherFileBrowser\Plugins\Ookii.Dialogs.dll" />
+    <None Include="Assets\Plugins\sqlite3.dll" />
+    <None Include="Assets\Plugins\StandaloneFileBrowser\Plugins\Ookii.Dialogs.dll" />
+    <None Include="Assets\Plugins\Mono.Data.Sqlite.dll" />
+    <None Include="Assets\Plugins\StandaloneFileBrowser\Plugins\System.Windows.Forms.dll" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -407,16 +437,20 @@
       <HintPath>Library\PackageCache\com.unity.testtools.codecoverage@1.2.5\lib\ReportGenerator\ReportGeneratorMerged.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Windows.Forms">
-      <HintPath>Assets\Plugins\AnotherFileBrowser\Plugins\System.Windows.Forms.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Ookii.Dialogs">
-      <HintPath>Assets\Plugins\AnotherFileBrowser\Plugins\Ookii.Dialogs.dll</HintPath>
+      <HintPath>Assets\Plugins\StandaloneFileBrowser\Plugins\Ookii.Dialogs.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.4\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>Assets\Plugins\StandaloneFileBrowser\Plugins\System.Windows.Forms.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>Assets\Plugins\Mono.Data.Sqlite.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">
