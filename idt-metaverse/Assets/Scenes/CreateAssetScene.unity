@@ -157,7 +157,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -1000, y: -300}
+  m_SizeDelta: {x: -1200, y: -300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &86676812
 MonoBehaviour:
@@ -806,6 +806,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1283650008
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1283650009}
+  - component: {fileID: 1283650010}
+  m_Layer: 0
+  m_Name: NetworkingController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1283650009
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283650008}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1283650010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283650008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b79412f54fc01c4ca9a13829078f210, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1646721708
 GameObject:
   m_ObjectHideFlags: 0
@@ -835,6 +879,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94bb3b3f3d2311448b007e57cd9e3d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obj: {fileID: 0}
+  networkingScript: {fileID: 1283650010}
 --- !u!4 &1646721710
 Transform:
   m_ObjectHideFlags: 0
@@ -952,3 +998,4 @@ SceneRoots:
   - {fileID: 1729001374}
   - {fileID: 1262541007}
   - {fileID: 1646721710}
+  - {fileID: 1283650009}

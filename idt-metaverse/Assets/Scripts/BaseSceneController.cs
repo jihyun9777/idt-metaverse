@@ -184,12 +184,6 @@ public class BaseSceneController : MonoBehaviour
 
     #endregion
 
-    #region Tile Controller
-
-    
-
-    #endregion
-
     #region Create Floor
 
     //Create floor according to user input
