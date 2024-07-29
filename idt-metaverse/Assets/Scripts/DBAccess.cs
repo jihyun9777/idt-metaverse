@@ -22,8 +22,6 @@ public class DBAccess : MonoBehaviour
 
         string connectionString = "URI=file:" + filepath;
         dbConnection = new SqliteConnection(connectionString);
-
-        ReadSpaceData();
     }
 
     public void OpenDB()
@@ -98,13 +96,15 @@ public class DBAccess : MonoBehaviour
         CloseDB();
     }
 
-    public void SearchData(string name)
+    public SpaceData SearchData(string name)
     {
+        SpaceData spaceData = null;
+
         OpenDB();
 
         using (IDbCommand dbCommand = dbConnection.CreateCommand())
         {
-            dbCommand.CommandText = $"SELECT * FROM Space WHERE name = '{name}'";
+            dbCommand.CommandText = $"SELECT * FROM Space WHERE Name = '{name}'";
 
             using (IDataReader dataReader = dbCommand.ExecuteReader())
             {
@@ -114,18 +114,20 @@ public class DBAccess : MonoBehaviour
                 }
                 else
                 {
-                    do
+                    spaceData = new SpaceData
                     {
-                        string foundName = dataReader.GetString(0);
-                        int x = dataReader.GetInt32(1);
-                        int y = dataReader.GetInt32(2);
-                        Debug.Log("Found - Name: " + foundName + ", X: " + x + ", Y: " + y);
-                    } while (dataReader.Read());
+                        Name = dataReader.GetString(0),
+                        X = dataReader.GetInt32(1),
+                        Y = dataReader.GetInt32(2),
+                        //Preview = dataReader.IsDBNull(3) ? null : (byte[])dataReader[3]
+                    };
                 }
             }
         }
 
         CloseDB();
+
+        return spaceData;
     }
 
     public List<SpaceData> ReadAllSpaces()
