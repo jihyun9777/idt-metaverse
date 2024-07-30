@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2560
     height: 1349.3334
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Inspector
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -118,7 +118,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 1
-  controlID: 17
+  controlID: 180
   draggingID: 0
 --- !u!114 &6
 MonoBehaviour:
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 18
+  controlID: 181
   draggingID: 0
 --- !u!114 &7
 MonoBehaviour:
@@ -170,7 +170,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 19
+  controlID: 55
   draggingID: 0
 --- !u!114 &8
 MonoBehaviour:
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 50}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 31
+  controlID: 56
   draggingID: 0
 --- !u!114 &10
 MonoBehaviour:
@@ -300,7 +300,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 0
-  controlID: 116
+  controlID: 182
   draggingID: 0
 --- !u!114 &13
 MonoBehaviour:
@@ -326,7 +326,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 100}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 117
+  controlID: 94
   draggingID: 0
 --- !u!114 &14
 MonoBehaviour:
@@ -399,8 +399,8 @@ MonoBehaviour:
     y: 0
     width: 514
     height: 1299.3334
-  m_MinSize: {x: 276, y: 71}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 17}
@@ -765,9 +765,9 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 1
-      snapOffset: {x: -262.66675, y: 10.666626}
+      snapOffset: {x: 1342.6666, y: 10.666626}
       snapOffsetDelta: {x: 0, y: 0}
-      snapCorner: 1
+      snapCorner: 0
       id: UnityEditor.SceneViewCameraOverlay
       index: 10
       layout: 4
@@ -810,9 +810,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 956.5, y: 537, z: -8.5}
+    m_Target: {x: -2.5969272, y: -2.3788016, z: 0.22481374}
     speed: 2
-    m_Value: {x: 956.5, y: 537, z: -8.5}
+    m_Value: {x: -2.5969272, y: -2.3788016, z: 0.22481374}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -862,9 +862,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 1106.0079
+    m_Target: 5.671633
     speed: 2
-    m_Value: 1106.0079
+    m_Value: 5.671633
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1060,9 +1060,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 30600000
+      m_SelectedIDs: c267ffff
       m_LastClickedID: 0
-      m_ExpandedIDs: 22d7ffff80d7ffffead7ffff92d8fffffed8ffff56d9ffffb6d9ffff34daffff44dbffffd0f2ffff78f3ffffcaf5ffff26f6fffff6f7ffff0cfbffff7e5d0000
+      m_ExpandedIDs: c667ffff5e89ffff848dffff709cffff62a6ffff0aaeffff4ebcffff44bdffffaebfffff7ec0ffff5ac1ffff2ac3ffff6ac6ffff62d0ffffe4d0ffffb0d1ffffb8d2ffff96d3ffff7cd4ffff8ed6ffff72d7ffff50ddffff18e0ffff0ce4ffff0cfbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1131,7 +1131,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scenes
+    - Assets/Scripts
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -1139,16 +1139,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scenes
+  - Assets/Scripts
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\KETI\Documents\GitHub\idt-metaverse\idt-metaverse
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 02600000
-    m_LastClickedID: 24578
-    m_ExpandedIDs: 00000000d05f0000d25f0000d45f0000d65f0000d85f0000da5f0000dc5f00000460000000ca9a3bffffff7f
+    m_SelectedIDs: 64610000
+    m_LastClickedID: 24932
+    m_ExpandedIDs: 0000000030610000326100003461000036610000386100003a6100003c6100006461000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1176,7 +1176,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000d05f0000d25f0000d45f0000d65f0000d85f0000da5f0000dc5f0000
+    m_ExpandedIDs: 0000000030610000326100003461000036610000386100003a6100003c610000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

@@ -60,6 +60,9 @@ public class BaseSceneController : MonoBehaviour
 
     #endregion
 
+    public GameObject obj;
+    public GameObject file;
+
     #region Unity Methods
 
     void Start()
@@ -97,6 +100,8 @@ public class BaseSceneController : MonoBehaviour
         ColorUtility.TryParseHtmlString("#B0E8F9", out OffColor);
 
         #endregion
+    
+        Test();
     }
 
     void Update()
@@ -344,7 +349,20 @@ public class BaseSceneController : MonoBehaviour
     public void LoadCreateAssetScene()
     {
         SceneManager.LoadScene("CreateAssetScene");
+        
     }
 
     #endregion
+
+    public void Test()
+    {
+        file = Resources.Load<GameObject>("Sample1");
+        obj = Instantiate(file, Vector3.zero, Quaternion.identity);
+        
+        Transform child = obj.transform.GetChild(0);
+
+        child.gameObject.AddComponent<Rigidbody>().isKinematic = true;
+        child.gameObject.AddComponent<BoxCollider>();
+        child.gameObject.AddComponent<AssetController>();
+    }
 }

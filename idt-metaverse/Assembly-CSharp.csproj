@@ -71,6 +71,7 @@
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
+    <Compile Include="Assets\Scripts\MainSceneScripts\CreateObjectController.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\Scripts\SpaceMenuController.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
@@ -98,7 +99,6 @@
     <Compile Include="Assets\Scripts\OpenFile.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
-    <Compile Include="Assets\Scripts\CreateObjectController.cs" />
     <Compile Include="Assets\Scripts\MainSceneScripts\CreateModeButtonController.cs" />
     <Compile Include="Assets\Scripts\ImportAssets.cs" />
     <Compile Include="Assets\Scripts\DBAccess.cs" />
@@ -115,6 +115,7 @@
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
+    <Compile Include="Assets\Scripts\AssetController.cs" />
     <Compile Include="Assets\Scripts\MainSceneScripts\TileState.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
   </ItemGroup>
