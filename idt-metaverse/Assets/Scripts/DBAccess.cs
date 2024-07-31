@@ -40,6 +40,8 @@ public class DBAccess : MonoBehaviour
         }
     }
 
+    #region Space DB
+
     public void ReadSpaceData()
     {
         OpenDB();
@@ -58,10 +60,11 @@ public class DBAccess : MonoBehaviour
                 {
                     do
                     {
-                        string name = dataReader.GetString(0);
-                        int x = dataReader.GetInt32(1);
-                        int y = dataReader.GetInt32(2);
-                        Debug.Log("Name: " + name + ", X: " + x + ", Y: " + y);
+                        int id = dataReader.GetInt32(0);
+                        string name = dataReader.GetString(1);
+                        int x = dataReader.GetInt32(2);
+                        int y = dataReader.GetInt32(3);
+                        Debug.Log("ID: " + id + ", Name: " + name + ", X: " + x + ", Y: " + y);
                     } while (dataReader.Read());
                 }
             }
@@ -70,14 +73,52 @@ public class DBAccess : MonoBehaviour
         CloseDB();
     }
 
-    public void InsertSpaceData(string name, int x, int y)
+    public int InsertSpaceData(string name, int x, int y, byte[] preview)
+    {
+        OpenDB();
+
+        int lastInsertedId = -1;
+        
+        using (IDbCommand dbCommand = dbConnection.CreateCommand())
+        {
+            dbCommand.CommandText = $"INSERT INTO Space (name, x, y, preview) VALUES (@name, @x, @y, @preview)";
+            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
+            dbCommand.Parameters.Add(new SqliteParameter("@x", x));
+            dbCommand.Parameters.Add(new SqliteParameter("@y", y));
+            dbCommand.Parameters.Add(new SqliteParameter("@preview", preview));
+            dbCommand.ExecuteNonQuery();
+        }
+
+        using (IDbCommand dbCommand = dbConnection.CreateCommand())
+        {
+            dbCommand.CommandText = "SELECT last_insert_rowid()";
+            lastInsertedId = (int)(long)dbCommand.ExecuteScalar();
+        }
+
+        CloseDB();
+
+        return lastInsertedId;
+    }
+
+    public void UpdateSpaceData(string name, int x, int y)
     {
         OpenDB();
 
         using (IDbCommand dbCommand = dbConnection.CreateCommand())
         {
-            dbCommand.CommandText = $"INSERT INTO Space (name, x, y) VALUES ('{name}', {x}, {y})";
-            dbCommand.ExecuteNonQuery();
+            // Use parameterized queries to prevent SQL injection
+            dbCommand.CommandText = "UPDATE Space SET x = @x, y = @y WHERE name = @name";
+
+            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
+            dbCommand.Parameters.Add(new SqliteParameter("@x", x));
+            dbCommand.Parameters.Add(new SqliteParameter("@y", y));
+
+            int rowsAffected = dbCommand.ExecuteNonQuery();
+
+            if (rowsAffected == 0)
+            {
+                Debug.LogWarning("No rows were updated. Check if the Space with the given Name exists.");
+            }
         }
 
         CloseDB();
@@ -96,7 +137,7 @@ public class DBAccess : MonoBehaviour
         CloseDB();
     }
 
-    public SpaceData SearchData(string name)
+    public SpaceData SearchSpaceData(string name)
     {
         SpaceData spaceData = null;
 
@@ -104,7 +145,7 @@ public class DBAccess : MonoBehaviour
 
         using (IDbCommand dbCommand = dbConnection.CreateCommand())
         {
-            dbCommand.CommandText = $"SELECT * FROM Space WHERE Name = '{name}'";
+            dbCommand.CommandText = $"SELECT * FROM Space WHERE name = '{name}'";
 
             using (IDataReader dataReader = dbCommand.ExecuteReader())
             {
@@ -116,10 +157,11 @@ public class DBAccess : MonoBehaviour
                 {
                     spaceData = new SpaceData
                     {
-                        Name = dataReader.GetString(0),
-                        X = dataReader.GetInt32(1),
-                        Y = dataReader.GetInt32(2),
-                        //Preview = dataReader.IsDBNull(3) ? null : (byte[])dataReader[3]
+                        ID = dataReader.GetInt32(0),
+                        Name = dataReader.GetString(1),
+                        X = dataReader.GetInt32(2),
+                        Y = dataReader.GetInt32(3),
+                        //Preview = dataReader.IsDBNull(4) ? null : (byte[])dataReader[4]
                     };
                 }
             }
@@ -130,7 +172,7 @@ public class DBAccess : MonoBehaviour
         return spaceData;
     }
 
-    public List<SpaceData> ReadAllSpaces()
+    public List<SpaceData> SearchAllSpaces()
     {
         List<SpaceData> spaces = new List<SpaceData>();
 
@@ -146,10 +188,11 @@ public class DBAccess : MonoBehaviour
                 {
                     SpaceData space = new SpaceData
                     {
-                        Name = dataReader.GetString(0),
-                        X = dataReader.GetInt32(1),
-                        Y = dataReader.GetInt32(2),
-                        Preview = dataReader.IsDBNull(3) ? null : (byte[])dataReader[3]
+                        ID = dataReader.GetInt32(0),
+                        Name = dataReader.GetString(1),
+                        X = dataReader.GetInt32(2),
+                        Y = dataReader.GetInt32(3),
+                        Preview = dataReader.IsDBNull(4) ? null : (byte[])dataReader[4]
                     };
 
                     spaces.Add(space);
@@ -161,4 +204,92 @@ public class DBAccess : MonoBehaviour
 
         return spaces;
     }
+
+    #endregion
+
+    #region Asset DB
+
+    public List<AssetData> SearchAllAssets(int spaceID)
+    {
+        List<AssetData> assets = new List<AssetData>();
+
+        OpenDB();
+
+        using (IDbCommand dbCommand = dbConnection.CreateCommand())
+        {
+            dbCommand.CommandText = $"SELECT * FROM Assets WHERE SpaceID = {spaceID}";
+
+            using (IDataReader dataReader = dbCommand.ExecuteReader())
+            {
+                while (dataReader.Read())
+                {
+                    AssetData asset = new AssetData
+                    {
+                        SpaceID = dataReader.GetInt32(0),
+                        Name = dataReader.GetString(1),
+                        X = dataReader.GetInt32(2),
+                        Z = dataReader.GetInt32(3),
+                        Model = dataReader.GetString(4),
+                        Preview = dataReader.IsDBNull(5) ? null : (byte[])dataReader[5]
+                    };
+
+                    assets.Add(asset);
+                }
+            }
+        }
+        
+        CloseDB();
+
+        return assets;
+    }
+
+    public void InsertAssetData(int spaceId, string name, int x, int z, byte[] model, byte[] preview)
+    {
+        OpenDB();
+
+        using (IDbCommand dbCommand = dbConnection.CreateCommand())
+        {
+            dbCommand.CommandText = "INSERT INTO Asset (spaceId, name, x, z, model, preview) VALUES (@spaceId, @name, @x, @z, @model, @preview)";
+
+            dbCommand.Parameters.Add(new SqliteParameter("@spaceId", spaceId));
+            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
+            dbCommand.Parameters.Add(new SqliteParameter("@x", x));
+            dbCommand.Parameters.Add(new SqliteParameter("@z", z));
+            dbCommand.Parameters.Add(new SqliteParameter("@model", model ?? new byte[0])); 
+            dbCommand.Parameters.Add(new SqliteParameter("@preview", preview ?? new byte[0])); 
+
+            dbCommand.ExecuteNonQuery();
+        }
+
+        CloseDB();
+    }
+
+    public void UpdateAssetData(int spaceId, string name, int x, int z)
+    {
+        OpenDB();
+
+        using (IDbCommand dbCommand = dbConnection.CreateCommand())
+        {
+            //Use parameterized queries to prevent SQL injection
+            dbCommand.CommandText = "UPDATE Asset SET x = @x, z = @z WHERE name = @name AND spaceId = @spaceId";
+
+            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
+            dbCommand.Parameters.Add(new SqliteParameter("@spaceId", spaceId));
+            dbCommand.Parameters.Add(new SqliteParameter("@x", x));
+            dbCommand.Parameters.Add(new SqliteParameter("@z", z));
+
+            int rowsAffected = dbCommand.ExecuteNonQuery();
+
+            if (rowsAffected == 0)
+            {
+                Debug.LogWarning("No rows were updated. Check if the Asset with the given Name and SpaceID exists.");
+            }
+        }
+
+        CloseDB();
+    }
+
+    #endregion
 }
+
+

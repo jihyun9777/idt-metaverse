@@ -399,6 +399,7 @@
 "Assets/Scripts/AssetController.cs"
 "Assets/Scripts/BaseSceneController.cs"
 "Assets/Scripts/CameraSystem.cs"
+"Assets/Scripts/DataType.cs"
 "Assets/Scripts/DBAccess.cs"
 "Assets/Scripts/dummy.cs"
 "Assets/Scripts/ImportAssets.cs"
@@ -414,7 +415,6 @@
 "Assets/Scripts/MainSceneScripts/TileState.cs"
 "Assets/Scripts/OpenFile.cs"
 "Assets/Scripts/SpaceController.cs"
-"Assets/Scripts/SpaceData.cs"
 "Assets/Scripts/SpaceMenuController.cs"
 -langversion:9.0
 /deterministic

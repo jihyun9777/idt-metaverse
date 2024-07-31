@@ -16,7 +16,7 @@ public class SpaceMenuController : MonoBehaviour
 
     void Start()
     {
-        List<SpaceData> spaces = dBAccess.ReadAllSpaces();
+        List<SpaceData> spaces = dBAccess.SearchAllSpaces();
         for (int i = 1; i <= spaces.Count; i++)
         {
             int row = i / 4;
@@ -64,10 +64,11 @@ public class SpaceMenuController : MonoBehaviour
 
     public void LoadScene(string spaceName)
     {
-        SpaceData spaceData = dBAccess.SearchData(spaceName);
+        SpaceData spaceData = dBAccess.SearchSpaceData(spaceName);
 
         if (spaceData != null)
         {
+            PlayerPrefs.SetInt("SpaceID", spaceData.ID);
             PlayerPrefs.SetString("SpaceName", spaceData.Name);
             PlayerPrefs.SetInt("SpaceX", spaceData.X);
             PlayerPrefs.SetInt("SpaceY", spaceData.Y);

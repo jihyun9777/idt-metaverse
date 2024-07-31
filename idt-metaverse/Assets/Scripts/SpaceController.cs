@@ -33,13 +33,15 @@ public class SpaceController : MonoBehaviour
         //If inputs are all entered correctly
         if (!string.IsNullOrEmpty(inputName.text) && !string.IsNullOrEmpty(inputX.text) && !string.IsNullOrEmpty(inputY.text))
         {
+            //Add variables to DB
+            int spaceId = dBAccess.InsertSpaceData(inputName.text, int.Parse(inputX.text), int.Parse(inputY.text), null);
+
             //Pass variables to BaseScene
             PlayerPrefs.SetString("SpaceName", inputName.text);
             PlayerPrefs.SetInt("SpaceX", int.Parse(inputX.text));
             PlayerPrefs.SetInt("SpaceY", int.Parse(inputY.text));
+            PlayerPrefs.SetInt("SpaceID", spaceId);
 
-            //Add variables to DB
-            dBAccess.InsertSpaceData(inputName.text, int.Parse(inputX.text), int.Parse(inputY.text));
             LoadBaseScene();
         }
         //Else, change boxes' color red

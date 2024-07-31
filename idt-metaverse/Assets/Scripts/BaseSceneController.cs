@@ -59,9 +59,19 @@ public class BaseSceneController : MonoBehaviour
     private Vector3 previewTilePosition;
 
     #endregion
+    #region Asset Variables
+
+    public DBAccess dBAccess;
+    private int id;
+    private string spaceName;
 
     public GameObject obj;
     public GameObject file;
+
+    private float? positionX = null;
+    private float? positionZ = null;
+
+    #endregion
 
     #region Unity Methods
 
@@ -72,12 +82,14 @@ public class BaseSceneController : MonoBehaviour
         openButton.gameObject.SetActive(false);
         closePanel.SetActive(false);
 
-        //Receive values from Create Space Scene
+        //Receive values from other Scene
+        id = PlayerPrefs.GetInt("SpaceID");
         intX = PlayerPrefs.GetInt("SpaceX"); 
         intY = PlayerPrefs.GetInt("SpaceY"); 
         inputX.text = intX.ToString();
         inputY.text = intY.ToString();
         nameText.text = PlayerPrefs.GetString("SpaceName");
+        spaceName = PlayerPrefs.GetString("SpaceName");
 
         #endregion
 
@@ -101,6 +113,7 @@ public class BaseSceneController : MonoBehaviour
 
         #endregion
     
+        AddAssetTest();
         Test();
     }
 
@@ -125,6 +138,7 @@ public class BaseSceneController : MonoBehaviour
             if(currentFloor.x != intX || currentFloor.y != intY)
             {
                 CreateFloor(intX, intY);
+                dBAccess.UpdateSpaceData(spaceName, intX, intY);
                 floorCreated = true;
             }
         }
@@ -145,6 +159,36 @@ public class BaseSceneController : MonoBehaviour
         }
         else
             currentPreviewTile.SetActive(false);
+
+        #endregion
+    
+        #region Asset Update
+
+        if (obj != null)
+        {
+            Transform child = obj.transform.GetChild(0);
+            Vector3 childPosition = child.position;
+
+            //Check if positionX and positionZ are set and compare them
+            if (positionX.HasValue && positionZ.HasValue)
+            {
+                //Check if the Asset position differs from previous position
+                if (Mathf.Abs(childPosition.x - positionX.Value) > Mathf.Epsilon ||
+                    Mathf.Abs(childPosition.z - positionZ.Value) > Mathf.Epsilon)
+                {
+                    //나중에 Asset obj 파일 넣었을때 다시 시도
+                    //dBAccess.UpdateAssetData(id, spaceName, Mathf.RoundToInt(childPosition.x), Mathf.RoundToInt(childPosition.z));
+
+                    positionX = childPosition.x;
+                    positionZ = childPosition.z;
+                }
+            }
+            else
+            {
+                positionX = childPosition.x;
+                positionZ = childPosition.z;
+            }
+        }
 
         #endregion
     }
@@ -354,8 +398,9 @@ public class BaseSceneController : MonoBehaviour
 
     #endregion
 
-    public void Test()
+    public void AddAssetTest()
     {
+        //이거 db 에 넣고 
         file = Resources.Load<GameObject>("Sample1");
         obj = Instantiate(file, Vector3.zero, Quaternion.identity);
         
@@ -365,4 +410,11 @@ public class BaseSceneController : MonoBehaviour
         child.gameObject.AddComponent<BoxCollider>();
         child.gameObject.AddComponent<AssetController>();
     }
+
+    public void Test()
+    {
+        //여기서 space 에있는 asset 전부다 띄우기 (instantiate)
+        //Location update 되는지 확인
+    }
+
 }

@@ -11,8 +11,6 @@ public class AssetController : MonoBehaviour
 
     private Renderer objectRenderer;
     private BoxCollider boxCollider;
-    private Bounds objectBounds;
-    private Vector3[] bottomCorners;
 
     private bool isLocated = false;
 
@@ -21,20 +19,7 @@ public class AssetController : MonoBehaviour
         objectRenderer = GetComponent<Renderer>(); 
         originalColor = objectRenderer.material.color;
         boxCollider = GetComponent<BoxCollider>();
-
-        objectBounds = boxCollider.bounds;
-        bottomCorners = new Vector3[4];
-        bottomCorners[0] = new Vector3(objectBounds.min.x, objectBounds.min.y, objectBounds.min.z);
-        bottomCorners[1] = new Vector3(objectBounds.max.x, objectBounds.min.y, objectBounds.min.z);
-        bottomCorners[2] = new Vector3(objectBounds.min.x, objectBounds.min.y, objectBounds.max.z);
-        bottomCorners[3] = new Vector3(objectBounds.max.x, objectBounds.min.y, objectBounds.max.z);
     }
-
-    void Update()
-    {
-        
-    }
-
     
     #region Mouse Drag
 
@@ -46,9 +31,8 @@ public class AssetController : MonoBehaviour
 
     void OnMouseDrag()
     {
-        Vector3 newPos = GetMouseWorldPosition() + offset;
-        transform.position = newPos;
-        //UpdateObjectColor();
+        transform.position = GetMouseWorldPosition() + offset;
+        UpdateObjectColor();
     }
 
     private Vector3 GetMouseWorldPosition()
@@ -65,18 +49,27 @@ public class AssetController : MonoBehaviour
         return transform.position;
     }
 
-    public void UpdateObjectColor()
+    private void UpdateObjectColor()
     {
         if (isLocated)
             objectRenderer.material.color = originalColor;
-        else if (IsFullyOnTile())
+        else if (IsOnTile())
             objectRenderer.material.color = validColor;
         else
             objectRenderer.material.color = invalidColor;
     }
 
-    bool IsFullyOnTile()
+    private bool IsOnTile()
     {
+        Bounds objectBounds = boxCollider.bounds;
+
+        //Calculate the bottom corners of the object's bounds
+        Vector3[] bottomCorners = new Vector3[4];
+        bottomCorners[0] = new Vector3(objectBounds.min.x, objectBounds.min.y, objectBounds.min.z);
+        bottomCorners[1] = new Vector3(objectBounds.max.x, objectBounds.min.y, objectBounds.min.z);
+        bottomCorners[2] = new Vector3(objectBounds.min.x, objectBounds.min.y, objectBounds.max.z);
+        bottomCorners[3] = new Vector3(objectBounds.max.x, objectBounds.min.y, objectBounds.max.z);
+
         //Check for tiles underneath the object
         foreach (Vector3 corner in bottomCorners)
         {
@@ -107,28 +100,30 @@ public class AssetController : MonoBehaviour
 
     void OnMouseUp()
     {
-        if (IsFullyOnTile())
-            Debug.Log("Hey");
-        // if (IsFullyOnTile())
-        // {
-        //     Vector3 objectSize = objectBounds.size;
+        Vector3 position = transform.position;
+        Vector3 roundedPosition = new Vector3(
+            Mathf.Round(position.x),
+            position.y,
+            Mathf.Round(position.z)
+        );
 
-        //     Vector3 objectCenter = objectBounds.center;
-        //     Vector3 objectBottomCenter = new Vector3(objectCenter.x, objectBounds.min.y, objectCenter.z);
+        //Temporarily move the object to the rounded position
+        transform.position = roundedPosition;
 
-        //     //Determine the tile size (1x1) and position
-        //     float tileSize = 1f;
+        //If fully on the tile, keep the rounded position
+        if (IsOnTile())
+        {
+            transform.position = roundedPosition;
+            isLocated = true;
+        }
+        //If not fully on the tile, revert to the original position
+        else
+        {
+            transform.position = position;
+            isLocated = false;
+        }
 
-        //     //Calculate the offset required to move the object to the closest tile center
-        //     Vector3 offset = new Vector3(
-        //         Mathf.Round(objectBottomCenter.x / tileSize) * tileSize - objectBottomCenter.x,
-        //         0,
-        //         Mathf.Round(objectBottomCenter.z / tileSize) * tileSize - objectBottomCenter.z
-        //     );
-
-        //     transform.position += offset;
-        //     isLocated = true;
-        // }
+        UpdateObjectColor();
     }
 
     #endregion
