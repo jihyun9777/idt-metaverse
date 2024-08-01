@@ -62,7 +62,8 @@ public class BaseSceneController : MonoBehaviour
     #region Asset Variables
 
     public DBAccess dBAccess;
-    private int id;
+    public InfoNetworking infoNetworking;
+    private int spaceId;
     private string spaceName;
 
     public GameObject obj;
@@ -83,7 +84,7 @@ public class BaseSceneController : MonoBehaviour
         closePanel.SetActive(false);
 
         //Receive values from other Scene
-        id = PlayerPrefs.GetInt("SpaceID");
+        spaceId = PlayerPrefs.GetInt("SpaceID");
         intX = PlayerPrefs.GetInt("SpaceX"); 
         intY = PlayerPrefs.GetInt("SpaceY"); 
         inputX.text = intX.ToString();
@@ -113,8 +114,7 @@ public class BaseSceneController : MonoBehaviour
 
         #endregion
     
-        AddAssetTest();
-        Test();
+        Test2();
     }
 
     void Update()
@@ -138,7 +138,7 @@ public class BaseSceneController : MonoBehaviour
             if(currentFloor.x != intX || currentFloor.y != intY)
             {
                 CreateFloor(intX, intY);
-                dBAccess.UpdateSpaceData(spaceName, intX, intY);
+                dBAccess.SetSpaceData(spaceName, intX, intY);
                 floorCreated = true;
             }
         }
@@ -177,7 +177,7 @@ public class BaseSceneController : MonoBehaviour
                     Mathf.Abs(childPosition.z - positionZ.Value) > Mathf.Epsilon)
                 {
                     //나중에 Asset obj 파일 넣었을때 다시 시도
-                    //dBAccess.UpdateAssetData(id, spaceName, Mathf.RoundToInt(childPosition.x), Mathf.RoundToInt(childPosition.z));
+                    //dBAccess.UpdateAssetData(spaceId, spaceName, Mathf.RoundToInt(childPosition.x), Mathf.RoundToInt(childPosition.z));
 
                     positionX = childPosition.x;
                     positionZ = childPosition.z;
@@ -398,23 +398,73 @@ public class BaseSceneController : MonoBehaviour
 
     #endregion
 
-    public void AddAssetTest()
-    {
-        //이거 db 에 넣고 
-        file = Resources.Load<GameObject>("Sample1");
-        obj = Instantiate(file, Vector3.zero, Quaternion.identity);
-        
-        Transform child = obj.transform.GetChild(0);
-
-        child.gameObject.AddComponent<Rigidbody>().isKinematic = true;
-        child.gameObject.AddComponent<BoxCollider>();
-        child.gameObject.AddComponent<AssetController>();
-    }
-
     public void Test()
     {
-        //여기서 space 에있는 asset 전부다 띄우기 (instantiate)
-        //Location update 되는지 확인
+        List<AssetData> assets = dBAccess.SearchAllAssets(spaceId);
+
+        foreach (var asset in assets)
+        {
+            StartCoroutine(infoNetworking.DownloadOBJ(asset.Model, (loadedObj) =>
+            {
+                if (loadedObj != null)
+                {
+                    Transform child = loadedObj.transform.GetChild(0);
+
+                    //Set position of the child object
+                    child.position = new Vector3(asset.X, 0, asset.Z);
+
+                    //Set scale of the child object if not null
+                    if (asset.Scale.HasValue)
+                        child.localScale = Vector3.one * asset.Scale.Value;
+
+                    //Add components to the child object
+                    child.gameObject.AddComponent<Rigidbody>().isKinematic = true;
+                    child.gameObject.AddComponent<BoxCollider>();
+                    child.gameObject.AddComponent<AssetController>();
+                }
+                else
+                {
+                    Debug.LogError($"Failed to load model for asset {asset.Name}.");
+                }
+            }));
+        }
+    }
+
+    public void Test2()
+    {
+        // "StarterKit" 이름을 가진 자산을 검색합니다.
+        AssetData asset = dBAccess.SearchAsset(spaceId, "StarterKit");
+
+        if (asset != null)
+        {
+            StartCoroutine(infoNetworking.DownloadOBJ(asset.Model, (loadedObj) =>
+            {
+                if (loadedObj != null)
+                {
+                    Transform child = loadedObj.transform.GetChild(0);
+
+                    // Set position of the child object
+                    child.position = new Vector3(asset.X, 0, asset.Z);
+
+                    // Set scale of the child object if not null
+                    if (asset.Scale.HasValue)
+                        child.localScale = Vector3.one * asset.Scale.Value;
+
+                    // Add components to the child object
+                    child.gameObject.AddComponent<Rigidbody>().isKinematic = true;
+                    child.gameObject.AddComponent<BoxCollider>();
+                    child.gameObject.AddComponent<AssetController>();
+                }
+                else
+                {
+                    Debug.LogError($"Failed to load model for asset {asset.Name}.");
+                }
+            }));
+        }
+        else
+        {
+            Debug.LogError("Asset with the name 'StarterKit' not found.");
+        }
     }
 
 }

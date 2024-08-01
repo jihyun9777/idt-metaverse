@@ -34,7 +34,7 @@ public class SpaceController : MonoBehaviour
         if (!string.IsNullOrEmpty(inputName.text) && !string.IsNullOrEmpty(inputX.text) && !string.IsNullOrEmpty(inputY.text))
         {
             //Add variables to DB
-            int spaceId = dBAccess.InsertSpaceData(inputName.text, int.Parse(inputX.text), int.Parse(inputY.text), null);
+            int spaceId = dBAccess.AddSpaceData(inputName.text, int.Parse(inputX.text), int.Parse(inputY.text), null);
 
             //Pass variables to BaseScene
             PlayerPrefs.SetString("SpaceName", inputName.text);
