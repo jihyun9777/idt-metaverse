@@ -850,7 +850,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79412f54fc01c4ca9a13829078f210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jsonUrl: http://172.21.50.200:8081/shells
 --- !u!1 &1646721708
 GameObject:
   m_ObjectHideFlags: 0
@@ -881,7 +880,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   obj: {fileID: 0}
-  networkingScript: {fileID: 1283650010}
+  infoNetworking: {fileID: 1283650010}
 --- !u!4 &1646721710
 Transform:
   m_ObjectHideFlags: 0

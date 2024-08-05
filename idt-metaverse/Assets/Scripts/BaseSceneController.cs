@@ -114,7 +114,7 @@ public class BaseSceneController : MonoBehaviour
 
         #endregion
     
-        Test2();
+        Test();
     }
 
     void Update()
@@ -398,6 +398,7 @@ public class BaseSceneController : MonoBehaviour
 
     #endregion
 
+    // 주소 DB 에서 받아오기
     public void Test()
     {
         List<AssetData> assets = dBAccess.SearchAllAssets(spaceId);
@@ -430,41 +431,29 @@ public class BaseSceneController : MonoBehaviour
         }
     }
 
+    // 주소 manually 요청 때리는 test
     public void Test2()
     {
-        // "StarterKit" 이름을 가진 자산을 검색합니다.
-        AssetData asset = dBAccess.SearchAsset(spaceId, "StarterKit");
-
-        if (asset != null)
+        StartCoroutine(infoNetworking.DownloadOBJ((loadedObj) =>
         {
-            StartCoroutine(infoNetworking.DownloadOBJ(asset.Model, (loadedObj) =>
+            if (loadedObj != null)
             {
-                if (loadedObj != null)
-                {
-                    Transform child = loadedObj.transform.GetChild(0);
+                Transform child = loadedObj.transform.GetChild(0);
 
-                    // Set position of the child object
-                    child.position = new Vector3(asset.X, 0, asset.Z);
+                // Set position of the child object
+                child.position = new Vector3(0, 0, 0);
 
-                    // Set scale of the child object if not null
-                    if (asset.Scale.HasValue)
-                        child.localScale = Vector3.one * asset.Scale.Value;
-
-                    // Add components to the child object
-                    child.gameObject.AddComponent<Rigidbody>().isKinematic = true;
-                    child.gameObject.AddComponent<BoxCollider>();
-                    child.gameObject.AddComponent<AssetController>();
-                }
-                else
-                {
-                    Debug.LogError($"Failed to load model for asset {asset.Name}.");
-                }
-            }));
-        }
-        else
-        {
-            Debug.LogError("Asset with the name 'StarterKit' not found.");
-        }
+                // Add components to the child object
+                child.gameObject.AddComponent<Rigidbody>().isKinematic = true;
+                child.gameObject.AddComponent<BoxCollider>();
+                child.gameObject.AddComponent<AssetController>();
+            }
+            else
+            {
+                Debug.LogError($"Failed to load model for asset.");
+            }
+        }));
+        
     }
 
 }

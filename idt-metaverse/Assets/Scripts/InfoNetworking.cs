@@ -8,6 +8,7 @@ using Dummiesman;
 
 public class InfoNetworking : MonoBehaviour
 {
+    // Server 연결할때
     // public IEnumerator DownloadOBJ(string fileName, System.Action<GameObject> callback)
     // {
     //     string url = "http://127.0.0.1:3000/download/" + fileName;
