@@ -14,13 +14,14 @@ public class BaseSceneController : MonoBehaviour
     //Open Tab
     public Button closeButton;
     public TMP_Text nameText;
-    public TMP_Text DimText;
+    public TMP_Text dimText;
     public TMP_Text timesText;
     public TMP_InputField inputX;
     public TMP_InputField inputY;
-    public Button CreateModeButton;
+    public Button createModeButton;
 
     public TMP_Text assetsText;
+    public Button addAssetButton;
     public GameObject openPanel;
 
     //Close Tab
@@ -66,8 +67,10 @@ public class BaseSceneController : MonoBehaviour
     private int spaceId;
     private string spaceName;
 
+    public GameObject assetIcon;
     public GameObject obj;
-    public GameObject file;
+    private Vector3 startPosition = new Vector3(210, 450, 0);
+    private List<GameObject> assetIcons = new List<GameObject>();
 
     private float? positionX = null;
     private float? positionZ = null;
@@ -114,7 +117,7 @@ public class BaseSceneController : MonoBehaviour
 
         #endregion
     
-        Test();
+        CreateAssetList();
     }
 
     void Update()
@@ -203,13 +206,16 @@ public class BaseSceneController : MonoBehaviour
 
         closeButton.gameObject.SetActive(tapOpen);
         nameText.gameObject.SetActive(tapOpen);
-        DimText.gameObject.SetActive(tapOpen);
+        dimText.gameObject.SetActive(tapOpen);
         timesText.gameObject.SetActive(tapOpen);
         inputX.gameObject.SetActive(tapOpen);
         inputY.gameObject.SetActive(tapOpen);
-        CreateModeButton.gameObject.SetActive(tapOpen);
+        createModeButton.gameObject.SetActive(tapOpen);
 
         assetsText.gameObject.SetActive(tapOpen);
+        addAssetButton.gameObject.SetActive(tapOpen);
+        SetAssetIconsActive(tapOpen);
+
         openPanel.gameObject.SetActive(tapOpen);
 
         openButton.gameObject.SetActive(!tapOpen);
@@ -276,13 +282,13 @@ public class BaseSceneController : MonoBehaviour
 
     private void ChangeButtonColors(Color color)
     {
-        ColorBlock cb = CreateModeButton.colors;
+        ColorBlock cb = createModeButton.colors;
         cb.normalColor = color;
         cb.highlightedColor = color;
         cb.pressedColor = color;
         cb.selectedColor = color;
         cb.disabledColor = color;
-        CreateModeButton.colors = cb;
+        createModeButton.colors = cb;
     }
 
     private void UpdateTilePlacement(Vector3 mousePosition)
@@ -393,67 +399,78 @@ public class BaseSceneController : MonoBehaviour
     public void LoadCreateAssetScene()
     {
         SceneManager.LoadScene("CreateAssetScene");
-        
     }
 
-    #endregion
-
-    // 주소 DB 에서 받아오기
-    public void Test()
+    public void CreateAssetList()
     {
         List<AssetData> assets = dBAccess.SearchAllAssets(spaceId);
 
-        foreach (var asset in assets)
+        for (int i = 0; i < assets.Count; i++)
         {
-            StartCoroutine(infoNetworking.DownloadOBJ(asset.Model, (loadedObj) =>
+            AssetData asset = assets[i];
+
+            //Instantiate assetIcon
+            GameObject icon = Instantiate(assetIcon);
+            Button button = icon.GetComponentInChildren<Button>();
+            RectTransform rectTransform = button.GetComponentInChildren<RectTransform>();
+            TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
+
+            rectTransform.position = startPosition + new Vector3(0, -80 * i, 0);
+            buttonText.text = asset.Name;
+
+            assetIcons.Add(icon);
+
+            //If X and Z are not null, download and instantiate the model
+            if (asset.X.HasValue && asset.Z.HasValue)
             {
-                if (loadedObj != null)
-                {
-                    Transform child = loadedObj.transform.GetChild(0);
-
-                    //Set position of the child object
-                    child.position = new Vector3(asset.X, 0, asset.Z);
-
-                    //Set scale of the child object if not null
-                    if (asset.Scale.HasValue)
-                        child.localScale = Vector3.one * asset.Scale.Value;
-
-                    //Add components to the child object
-                    child.gameObject.AddComponent<Rigidbody>().isKinematic = true;
-                    child.gameObject.AddComponent<BoxCollider>();
-                    child.gameObject.AddComponent<AssetController>();
-                }
-                else
-                {
-                    Debug.LogError($"Failed to load model for asset {asset.Name}.");
-                }
-            }));
+                StartCoroutine(DownloadAndInstantiateModel(asset.Name, asset.Model, new Vector3(asset.X.Value, 0f, asset.Z.Value), asset.Scale));
+            }
         }
     }
 
-    // 주소 manually 요청 때리는 test
-    public void Test2()
+    private IEnumerator DownloadAndInstantiateModel(string assetName, string modelUrl, Vector3 position, float? scale)
     {
-        StartCoroutine(infoNetworking.DownloadOBJ((loadedObj) =>
+        yield return StartCoroutine(infoNetworking.DownloadOBJ(modelUrl, (GameObject loadedObj) =>
         {
             if (loadedObj != null)
             {
                 Transform child = loadedObj.transform.GetChild(0);
 
-                // Set position of the child object
-                child.position = new Vector3(0, 0, 0);
+                //Set position of the child object
+                child.position = position;
 
-                // Add components to the child object
+                //Set scale of the child object if not null
+                if (scale.HasValue)
+                    child.localScale = Vector3.one * scale.Value;
+
+                //Add components to the child object
                 child.gameObject.AddComponent<Rigidbody>().isKinematic = true;
                 child.gameObject.AddComponent<BoxCollider>();
                 child.gameObject.AddComponent<AssetController>();
-            }
-            else
-            {
-                Debug.LogError($"Failed to load model for asset.");
+
+                //Attach event handler to new AssetController
+                AssetController assetController = child.GetComponent<AssetController>();
+                assetController.OnPositionChanged += (updatedAsset, newPosition) =>
+                {
+                    HandleAssetPositionChanged(assetName, newPosition);
+                };
             }
         }));
-        
     }
 
+    private void SetAssetIconsActive(bool isActive)
+    {
+        foreach (GameObject icon in assetIcons)
+        {
+            icon.SetActive(isActive);
+        }
+    }
+
+    private void HandleAssetPositionChanged(string assetName, Vector3 newPosition)
+    {
+        //Update the asset position in the database
+        dBAccess.SetAssetLocation(spaceId, assetName, newPosition.x, newPosition.z);
+    }
+
+    #endregion
 }

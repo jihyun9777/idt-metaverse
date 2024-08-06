@@ -730,7 +730,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -734, y: 120}
+  m_AnchoredPosition: {x: -734, y: 100}
   m_SizeDelta: {x: 380, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &241827524
@@ -2884,8 +2884,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -750, y: 220}
-  m_SizeDelta: {x: 350, y: 48}
+  m_AnchoredPosition: {x: -750, y: 210}
+  m_SizeDelta: {x: 350, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1318557636
 MonoBehaviour:
@@ -3112,6 +3112,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79412f54fc01c4ca9a13829078f210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jsonUrl: http://172.21.50.200:8081/shells
+  baseUrl: http://172.21.50.200:8081/submodels/
 --- !u!4 &1366973956
 Transform:
   m_ObjectHideFlags: 0
@@ -3231,8 +3233,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -750, y: 22}
-  m_SizeDelta: {x: 350, y: 48}
+  m_AnchoredPosition: {x: -750, y: 0}
+  m_SizeDelta: {x: 350, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1425487667
 MonoBehaviour:
@@ -4285,12 +4287,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   closeButton: {fileID: 1762843387}
   nameText: {fileID: 1154417556}
-  DimText: {fileID: 1679180843}
+  dimText: {fileID: 1679180843}
   timesText: {fileID: 2138274590}
   inputX: {fileID: 1783713896}
   inputY: {fileID: 1094944542}
-  CreateModeButton: {fileID: 1318557636}
+  createModeButton: {fileID: 1318557636}
   assetsText: {fileID: 241827524}
+  addAssetButton: {fileID: 1425487667}
   openPanel: {fileID: 1633130129}
   openButton: {fileID: 801751651}
   closePanel: {fileID: 765626392}
@@ -4303,8 +4306,8 @@ MonoBehaviour:
   OffColor: {r: 1, g: 1, b: 1, a: 1}
   dBAccess: {fileID: 1852751476}
   infoNetworking: {fileID: 1366973955}
+  assetIcon: {fileID: 3995569214938735930, guid: 88ca6059c93adb045a2436443c6fafdf, type: 3}
   obj: {fileID: 0}
-  file: {fileID: 0}
   cameraSystem: {fileID: 656499987}
 --- !u!4 &1853378178
 Transform:

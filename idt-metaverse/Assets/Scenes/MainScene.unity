@@ -1336,6 +1336,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79412f54fc01c4ca9a13829078f210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jsonUrl: http://172.21.50.200:8081/shells
+  baseUrl: http://172.21.50.200:8081/submodels/
 --- !u!4 &231869224
 Transform:
   m_ObjectHideFlags: 0

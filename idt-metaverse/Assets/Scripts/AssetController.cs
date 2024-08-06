@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,8 @@ public class AssetController : MonoBehaviour
     private BoxCollider boxCollider;
 
     private bool isLocated = false;
+
+    public event Action<string, Vector3> OnPositionChanged;
 
     void Start()
     {
@@ -115,6 +118,9 @@ public class AssetController : MonoBehaviour
         {
             transform.position = roundedPosition;
             isLocated = true;
+
+            //Trigger the position changed event
+            OnPositionChanged?.Invoke(gameObject.name, transform.position);
         }
         //If not fully on the tile, revert to the original position
         else

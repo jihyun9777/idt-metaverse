@@ -9,6 +9,7 @@ using System.IO;
 public class DBAccess : MonoBehaviour
 {
     private IDbConnection dbConnection;
+    private string connectionString;
 
     public void Start()
     {
@@ -21,7 +22,7 @@ public class DBAccess : MonoBehaviour
             return;
         }
 
-        string connectionString = "URI=file:" + filepath;
+        connectionString = "URI=file:" + filepath;
         dbConnection = new SqliteConnection(connectionString);
     }
 
@@ -229,8 +230,8 @@ public class DBAccess : MonoBehaviour
                     {
                         SpaceID = dataReader.GetInt32(0),
                         Name = dataReader.GetString(1),
-                        X = dataReader.GetFloat(2),
-                        Z = dataReader.GetFloat(3),
+                        X = dataReader.IsDBNull(2) ? (float?)null : dataReader.GetFloat(2),
+                        Z = dataReader.IsDBNull(3) ? (float?)null : dataReader.GetFloat(3),
                         Scale = dataReader.IsDBNull(4) ? (float?)null : dataReader.GetFloat(4),
                         Model = dataReader.GetString(5),
                         Preview = dataReader.IsDBNull(6) ? null : (byte[])dataReader[6]
@@ -267,8 +268,8 @@ public class DBAccess : MonoBehaviour
                     {
                         SpaceID = dataReader.GetInt32(0),
                         Name = dataReader.GetString(1),
-                        X = dataReader.GetFloat(2),
-                        Z = dataReader.GetFloat(3),
+                        X = dataReader.IsDBNull(2) ? (float?)null : dataReader.GetFloat(2),
+                        Z = dataReader.IsDBNull(3) ? (float?)null : dataReader.GetFloat(3),
                         Scale = dataReader.IsDBNull(4) ? (float?)null : dataReader.GetFloat(4),
                         Model = dataReader.GetString(5),
                         Preview = dataReader.IsDBNull(6) ? null : (byte[])dataReader[6]
@@ -286,27 +287,28 @@ public class DBAccess : MonoBehaviour
         return assetData;
     }
 
-    public void AddAssetData(int spaceId, string name, float x, float z, float? scale, string model, byte[] preview)
+    public void AddAssetData(int spaceId, string name, float? x, float? z, float? scale, string model, byte[] preview)
     {
         OpenDB();
 
         using (IDbCommand dbCommand = dbConnection.CreateCommand())
         {
-            dbCommand.CommandText = "INSERT INTO Asset (spaceId, name, x, z, model, preview) VALUES (@spaceId, @name, @x, @z, @model, @preview)";
+            dbCommand.CommandText = "INSERT INTO Asset (spaceId, name, x, z, scale, model, preview) VALUES (@spaceId, @name, @x, @z, @scale, @model, @preview)";
 
             dbCommand.Parameters.Add(new SqliteParameter("@spaceId", spaceId));
             dbCommand.Parameters.Add(new SqliteParameter("@name", name));
-            dbCommand.Parameters.Add(new SqliteParameter("@x", x));
-            dbCommand.Parameters.Add(new SqliteParameter("@z", z));
+            dbCommand.Parameters.Add(new SqliteParameter("@x", x.HasValue ? (object)x.Value : DBNull.Value));
+            dbCommand.Parameters.Add(new SqliteParameter("@z", z.HasValue ? (object)z.Value : DBNull.Value));
             dbCommand.Parameters.Add(new SqliteParameter("@scale", scale.HasValue ? (object)scale.Value : DBNull.Value));
-            dbCommand.Parameters.Add(new SqliteParameter("@model", model)); 
-            dbCommand.Parameters.Add(new SqliteParameter("@preview", preview ?? new byte[0])); 
+            dbCommand.Parameters.Add(new SqliteParameter("@model", model));
+            dbCommand.Parameters.Add(new SqliteParameter("@preview", preview ?? new byte[0]));
 
             dbCommand.ExecuteNonQuery();
         }
 
         CloseDB();
     }
+
 
     public void SetAssetLocation(int spaceId, string name, float x, float z)
     {
@@ -320,6 +322,8 @@ public class DBAccess : MonoBehaviour
             dbCommand.Parameters.Add(new SqliteParameter("@name", name));
             dbCommand.Parameters.Add(new SqliteParameter("@x", x));
             dbCommand.Parameters.Add(new SqliteParameter("@z", z));
+
+            Debug.Log($"Executing SQL: {dbCommand.CommandText} with Parameters: SpaceID={spaceId}, Name={name}, X={x}, Z={z}");
 
             int rowsAffected = dbCommand.ExecuteNonQuery();
 
