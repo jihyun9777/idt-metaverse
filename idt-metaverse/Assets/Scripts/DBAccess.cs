@@ -187,7 +187,29 @@ public class DBAccess : MonoBehaviour
 
             if (rowsAffected == 0)
             {
-                Debug.LogWarning("No rows were updated. Check if the Space with the given Name exists.");
+                Debug.LogWarning("No rows were updated.");
+            }
+        }
+
+        CloseDB();
+    }
+
+    public void SetSpacePreview(string name, byte[] preview)
+    {
+        OpenDB();
+
+        using (IDbCommand dbCommand = dbConnection.CreateCommand())
+        {
+            dbCommand.CommandText = "UPDATE Space SET preview = @preview WHERE name = @name";
+
+            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
+            dbCommand.Parameters.Add(new SqliteParameter("@preview", preview));
+
+            int rowsAffected = dbCommand.ExecuteNonQuery();
+
+            if (rowsAffected == 0)
+            {
+                Debug.LogWarning("No preview were updated.");
             }
         }
 
@@ -329,7 +351,7 @@ public class DBAccess : MonoBehaviour
 
             if (rowsAffected == 0)
             {
-                Debug.LogWarning("No rows were updated. Check if the Asset with the given Name and SpaceID exists.");
+                Debug.LogWarning("No rows were updated.");
             }
         }
 
@@ -352,7 +374,7 @@ public class DBAccess : MonoBehaviour
 
             if (rowsAffected == 0)
             {
-                Debug.LogWarning("No rows were updated. Check if the Asset with the given ID and Name exists.");
+                Debug.LogWarning("No rows were updated.");
             }
         }
 
@@ -376,7 +398,7 @@ public class DBAccess : MonoBehaviour
 
             if (rowsAffected == 0)
             {
-                Debug.LogWarning("No rows were updated. Check if the Asset with the given Name and SpaceID exists.");
+                Debug.LogWarning("No rows were updated.");
             }
         }
 
@@ -399,7 +421,7 @@ public class DBAccess : MonoBehaviour
 
             if (rowsAffected == 0)
             {
-                Debug.LogWarning("No rows were updated. Check if the Asset with the given Name and SpaceID exists.");
+                Debug.LogWarning("No rows were updated.");
             }
         }
 

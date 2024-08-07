@@ -232,11 +232,6 @@ public class BaseSceneController : MonoBehaviour
         return new Rect(bottomLeft.x, bottomLeft.y, topRight.x - bottomLeft.x, topRight.y - bottomLeft.y);
     }
 
-    public void LoadSpaceMenuScene()
-    {
-        SceneManager.LoadScene("SpaceMenuScene");
-    }
-
     #endregion
 
     #region Create Floor
@@ -473,4 +468,44 @@ public class BaseSceneController : MonoBehaviour
     }
 
     #endregion
+
+    #region ScreenShot
+
+    public void LoadSpaceMenuSceneWithScreenShot()
+    {
+        StartCoroutine(ScreenshotAndSaveToDB());
+    }
+
+    private IEnumerator ScreenshotAndSaveToDB()
+    {
+        //Close Tab before ScreenShot
+        if (tapOpen)
+        {
+            ToggleTab();
+        }
+
+        //Wait for end of frame to capture screenshot
+        yield return new WaitForEndOfFrame();
+
+        //Create a texture to read the screen contents
+        Texture2D screenTexture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+        screenTexture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        screenTexture.Apply();
+
+        //Encode texture to PNG
+        byte[] screenshotBytes = screenTexture.EncodeToPNG();
+        Destroy(screenTexture);
+
+        dBAccess.SetSpacePreview(spaceName, screenshotBytes);
+
+        if (!tapOpen)
+        {
+            ToggleTab();
+        }
+
+        SceneManager.LoadScene("SpaceMenuScene");
+    }
+
+    #endregion
+
 }
