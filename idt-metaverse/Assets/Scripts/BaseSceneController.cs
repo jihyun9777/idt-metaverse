@@ -142,6 +142,8 @@ public class BaseSceneController : MonoBehaviour
             {
                 CreateFloor(intX, intY);
                 dBAccess.SetSpaceData(spaceName, intX, intY);
+                PlayerPrefs.SetInt("SpaceX", intX);
+                PlayerPrefs.SetInt("SpaceY", intY);
                 floorCreated = true;
             }
         }
@@ -425,20 +427,34 @@ public class BaseSceneController : MonoBehaviour
 
     private IEnumerator DownloadAndInstantiateModel(string assetName, string modelUrl, Vector3 position, float? scale)
     {
-        yield return StartCoroutine(infoNetworking.DownloadOBJ(modelUrl, (GameObject loadedObj) =>
+        GameObject loadedObj = null;
+
+        //Start the download and wait for it to finish
+        yield return StartCoroutine(infoNetworking.DownloadOBJ(modelUrl, (GameObject obj) =>
         {
-            if (loadedObj != null)
+            loadedObj = obj;
+        }));
+
+        //Wait until the loaded object has at least one child
+        while (loadedObj != null && loadedObj.transform.childCount == 0)
+        {
+            yield return null;
+        }
+        
+        if (loadedObj != null && loadedObj.transform.childCount > 0)
+        {
+            Transform child = loadedObj.transform.GetChild(0);
+
+            //Set position of the child object
+            child.position = position;
+
+            //Set scale of the child object if not null
+            if (scale.HasValue)
+                child.localScale = Vector3.one * scale.Value;
+
+            //Add components to the child object if it doen not have one
+            if (child.gameObject.GetComponent<Rigidbody>() == null)
             {
-                Transform child = loadedObj.transform.GetChild(0);
-
-                //Set position of the child object
-                child.position = position;
-
-                //Set scale of the child object if not null
-                if (scale.HasValue)
-                    child.localScale = Vector3.one * scale.Value;
-
-                //Add components to the child object
                 child.gameObject.AddComponent<Rigidbody>().isKinematic = true;
                 child.gameObject.AddComponent<BoxCollider>();
                 child.gameObject.AddComponent<AssetController>();
@@ -450,7 +466,7 @@ public class BaseSceneController : MonoBehaviour
                     HandleAssetPositionChanged(assetName, newPosition);
                 };
             }
-        }));
+        }
     }
 
     private void SetAssetIconsActive(bool isActive)

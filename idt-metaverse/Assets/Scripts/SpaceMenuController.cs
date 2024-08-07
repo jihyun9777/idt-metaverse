@@ -9,7 +9,6 @@ public class SpaceMenuController : MonoBehaviour
 {
     public DBAccess dBAccess;
     public GameObject spaceIcon;
-    public Transform iconParent;  // Parent transform to hold the icons
 
     private Vector3 startPosition = new Vector3(510, 620, 0);
     private float iconSpacing = 300f;
