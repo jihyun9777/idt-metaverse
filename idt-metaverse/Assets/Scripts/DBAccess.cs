@@ -250,13 +250,14 @@ public class DBAccess : MonoBehaviour
                 {
                     AssetData asset = new AssetData
                     {
-                        SpaceID = dataReader.GetInt32(0),
-                        Name = dataReader.GetString(1),
-                        X = dataReader.IsDBNull(2) ? (float?)null : dataReader.GetFloat(2),
-                        Z = dataReader.IsDBNull(3) ? (float?)null : dataReader.GetFloat(3),
-                        Scale = dataReader.IsDBNull(4) ? (float?)null : dataReader.GetFloat(4),
-                        Model = dataReader.GetString(5),
-                        Preview = dataReader.IsDBNull(6) ? null : (byte[])dataReader[6]
+                        ID = dataReader.GetInt32(0), 
+                        SpaceID = dataReader.GetInt32(1),
+                        Name = dataReader.GetString(2),
+                        X = dataReader.IsDBNull(3) ? (float?)null : dataReader.GetFloat(3),
+                        Z = dataReader.IsDBNull(4) ? (float?)null : dataReader.GetFloat(4),
+                        Scale = dataReader.IsDBNull(5) ? (float?)null : dataReader.GetFloat(5),
+                        Model = dataReader.GetString(6),
+                        Preview = dataReader.IsDBNull(7) ? null : (byte[])dataReader[7]
                     };
 
                     assets.Add(asset);
@@ -269,7 +270,7 @@ public class DBAccess : MonoBehaviour
         return assets;
     }
 
-    public AssetData SearchAsset(int spaceId, string name)
+    public AssetData SearchAsset(int id)
     {
         AssetData assetData = null;
 
@@ -277,10 +278,9 @@ public class DBAccess : MonoBehaviour
 
         using (IDbCommand dbCommand = dbConnection.CreateCommand())
         {
-            dbCommand.CommandText = "SELECT * FROM Asset WHERE SpaceID = @spaceID AND Name = @name";
+            dbCommand.CommandText = "SELECT * FROM Asset WHERE ID = @id";
 
-            dbCommand.Parameters.Add(new SqliteParameter("@spaceID", spaceId));
-            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
+            dbCommand.Parameters.Add(new SqliteParameter("@id", id));
 
             using (IDataReader dataReader = dbCommand.ExecuteReader())
             {
@@ -288,18 +288,19 @@ public class DBAccess : MonoBehaviour
                 {
                     assetData = new AssetData
                     {
-                        SpaceID = dataReader.GetInt32(0),
-                        Name = dataReader.GetString(1),
-                        X = dataReader.IsDBNull(2) ? (float?)null : dataReader.GetFloat(2),
-                        Z = dataReader.IsDBNull(3) ? (float?)null : dataReader.GetFloat(3),
-                        Scale = dataReader.IsDBNull(4) ? (float?)null : dataReader.GetFloat(4),
-                        Model = dataReader.GetString(5),
-                        Preview = dataReader.IsDBNull(6) ? null : (byte[])dataReader[6]
+                        ID = dataReader.GetInt32(0),
+                        SpaceID = dataReader.GetInt32(1),
+                        Name = dataReader.GetString(2),
+                        X = dataReader.IsDBNull(3) ? (float?)null : dataReader.GetFloat(3),
+                        Z = dataReader.IsDBNull(4) ? (float?)null : dataReader.GetFloat(4),
+                        Scale = dataReader.IsDBNull(5) ? (float?)null : dataReader.GetFloat(5),
+                        Model = dataReader.GetString(6),
+                        Preview = dataReader.IsDBNull(7) ? null : (byte[])dataReader[7]
                     };
                 }
                 else
                 {
-                    Debug.LogWarning("No asset found with the specified ID and Name.");
+                    Debug.LogWarning("No asset found with the specified ID.");
                 }
             }
         }
@@ -332,20 +333,19 @@ public class DBAccess : MonoBehaviour
     }
 
 
-    public void SetAssetLocation(int spaceId, string name, float x, float z)
+    public void SetAssetLocation(int id, float x, float z)
     {
         OpenDB();
 
         using (IDbCommand dbCommand = dbConnection.CreateCommand())
         {
-            dbCommand.CommandText = "UPDATE Asset SET x = @x, z = @z WHERE name = @name AND spaceId = @spaceId";
+            dbCommand.CommandText = "UPDATE Asset SET X = @x, Z = @z WHERE ID = @id";
 
-            dbCommand.Parameters.Add(new SqliteParameter("@spaceId", spaceId));
-            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
+            dbCommand.Parameters.Add(new SqliteParameter("@id", id));
             dbCommand.Parameters.Add(new SqliteParameter("@x", x));
             dbCommand.Parameters.Add(new SqliteParameter("@z", z));
 
-            Debug.Log($"Executing SQL: {dbCommand.CommandText} with Parameters: SpaceID={spaceId}, Name={name}, X={x}, Z={z}");
+            Debug.Log($"Executing SQL: {dbCommand.CommandText} with Parameters: ID={id}, X={x}, Z={z}");
 
             int rowsAffected = dbCommand.ExecuteNonQuery();
 
@@ -358,18 +358,17 @@ public class DBAccess : MonoBehaviour
         CloseDB();
     }
 
-    public void SetAssetScale(int spaceId, string name, float scale)
+    public void SetAssetScale(int id, float scale)
     {
         OpenDB();
 
         using (IDbCommand dbCommand = dbConnection.CreateCommand())
         {
-            dbCommand.CommandText = "UPDATE Asset SET Scale = @scale WHERE SpaceID = @spaceID AND Name = @name";
+            dbCommand.CommandText = "UPDATE Asset SET Scale = @scale WHERE ID = @id";
 
-            dbCommand.Parameters.Add(new SqliteParameter("@spaceID", spaceId));
-            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
+            dbCommand.Parameters.Add(new SqliteParameter("@id", id));
             dbCommand.Parameters.Add(new SqliteParameter("@scale", scale));
-            
+
             int rowsAffected = dbCommand.ExecuteNonQuery();
 
             if (rowsAffected == 0)
@@ -381,17 +380,15 @@ public class DBAccess : MonoBehaviour
         CloseDB();
     }
 
-
-    public void SetAssetModel(int spaceId, string name, string modelUrl)
+    public void SetAssetModel(int id, string modelUrl)
     {
         OpenDB();
 
         using (IDbCommand dbCommand = dbConnection.CreateCommand())
         {
-            dbCommand.CommandText = "UPDATE Asset SET model = @model WHERE name = @name AND spaceId = @spaceId";
+            dbCommand.CommandText = "UPDATE Asset SET Model = @model WHERE ID = @id";
 
-            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
-            dbCommand.Parameters.Add(new SqliteParameter("@spaceId", spaceId));
+            dbCommand.Parameters.Add(new SqliteParameter("@id", id));
             dbCommand.Parameters.Add(new SqliteParameter("@model", modelUrl));
 
             int rowsAffected = dbCommand.ExecuteNonQuery();
@@ -405,16 +402,15 @@ public class DBAccess : MonoBehaviour
         CloseDB();
     }
 
-    public void SetAssetPreview(int spaceId, string name, byte[] preview)
+    public void SetAssetPreview(int id, byte[] preview)
     {
         OpenDB();
 
         using (IDbCommand dbCommand = dbConnection.CreateCommand())
         {
-            dbCommand.CommandText = "UPDATE Asset SET preview = @preview WHERE name = @name AND spaceId = @spaceId";
+            dbCommand.CommandText = "UPDATE Asset SET Preview = @preview WHERE ID = @id";
 
-            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
-            dbCommand.Parameters.Add(new SqliteParameter("@spaceId", spaceId));
+            dbCommand.Parameters.Add(new SqliteParameter("@id", id));
             dbCommand.Parameters.Add(new SqliteParameter("@preview", preview));
 
             int rowsAffected = dbCommand.ExecuteNonQuery();
@@ -428,17 +424,16 @@ public class DBAccess : MonoBehaviour
         CloseDB();
     }
 
-    public string GetAssetModel(int spaceId, string name)
+    public string GetAssetModel(int id)
     {
         OpenDB();
         string modelUrl = null;
 
         using (IDbCommand dbCommand = dbConnection.CreateCommand())
         {
-            dbCommand.CommandText = "SELECT model FROM Asset WHERE name = @name AND spaceId = @spaceId";
+            dbCommand.CommandText = "SELECT Model FROM Asset WHERE ID = @id";
 
-            dbCommand.Parameters.Add(new SqliteParameter("@name", name));
-            dbCommand.Parameters.Add(new SqliteParameter("@spaceId", spaceId));
+            dbCommand.Parameters.Add(new SqliteParameter("@id", id));
 
             using (IDataReader dataReader = dbCommand.ExecuteReader())
             {
@@ -448,7 +443,7 @@ public class DBAccess : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning("No data found with the specified name and spaceId.");
+                    Debug.LogWarning("No data found with the specified ID.");
                 }
             }
         }

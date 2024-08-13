@@ -1,9 +1,12 @@
+using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Dummiesman;
 
 public class BaseSceneController : MonoBehaviour
 {
@@ -63,7 +66,7 @@ public class BaseSceneController : MonoBehaviour
     #region Asset Variables
 
     public DBAccess dBAccess;
-    public InfoNetworking infoNetworking;
+    //public InfoNetworking infoNetworking;
     private int spaceId;
     private string spaceName;
 
@@ -117,7 +120,11 @@ public class BaseSceneController : MonoBehaviour
 
         #endregion
     
+        #region Asset Start
+
         CreateAssetList();
+
+        #endregion
     }
 
     void Update()
@@ -420,50 +427,57 @@ public class BaseSceneController : MonoBehaviour
             //If X and Z are not null, download and instantiate the model
             if (asset.X.HasValue && asset.Z.HasValue)
             {
-                StartCoroutine(DownloadAndInstantiateModel(asset.Name, asset.Model, new Vector3(asset.X.Value, 0f, asset.Z.Value), asset.Scale));
+                StartCoroutine(LoadAndInstantiateModel(asset.ID, asset.Name, asset.Model, new Vector3(asset.X.Value, 0f, asset.Z.Value), asset.Scale));
             }
         }
     }
 
-    private IEnumerator DownloadAndInstantiateModel(string assetName, string modelUrl, Vector3 position, float? scale)
+    private IEnumerator LoadAndInstantiateModel(int assetId, string assetName, string modelPath, Vector3 position, float? scale)
     {
         GameObject loadedObj = null;
 
-        //Start the download and wait for it to finish
-        yield return StartCoroutine(infoNetworking.DownloadOBJ(modelUrl, (GameObject obj) =>
-        {
-            loadedObj = obj;
-        }));
+        //Remove file extension and adjust the path to be relative to the Resources folder
+        string relativePath = Path.Combine("Models", Path.GetFileNameWithoutExtension(modelPath));
+        string fullPath = Path.Combine(Application.dataPath, "Resources", relativePath + ".obj");
 
-        //Wait until the loaded object has at least one child
+        //Load the OBJ file using OBJLoader
+        loadedObj = new OBJLoader().Load(fullPath);
+
+        if (loadedObj == null)
+        {
+            Debug.LogError("Model could not be loaded from path: " + fullPath);
+            yield break;
+        }
+
+        loadedObj = Instantiate(loadedObj);
+
+        // Wait until the object is fully loaded
         while (loadedObj != null && loadedObj.transform.childCount == 0)
         {
             yield return null;
         }
-        
+
         if (loadedObj != null && loadedObj.transform.childCount > 0)
         {
             Transform child = loadedObj.transform.GetChild(0);
-
-            //Set position of the child object
             child.position = position;
 
-            //Set scale of the child object if not null
             if (scale.HasValue)
+            {
                 child.localScale = Vector3.one * scale.Value;
+            }
 
-            //Add components to the child object if it doen not have one
+            // Add components to the object if not already present
             if (child.gameObject.GetComponent<Rigidbody>() == null)
             {
                 child.gameObject.AddComponent<Rigidbody>().isKinematic = true;
                 child.gameObject.AddComponent<BoxCollider>();
                 child.gameObject.AddComponent<AssetController>();
 
-                //Attach event handler to new AssetController
                 AssetController assetController = child.GetComponent<AssetController>();
                 assetController.OnPositionChanged += (updatedAsset, newPosition) =>
                 {
-                    HandleAssetPositionChanged(assetName, newPosition);
+                    HandleAssetPositionChanged(assetId, newPosition);
                 };
             }
         }
@@ -477,10 +491,10 @@ public class BaseSceneController : MonoBehaviour
         }
     }
 
-    private void HandleAssetPositionChanged(string assetName, Vector3 newPosition)
+    private void HandleAssetPositionChanged(int assetId, Vector3 newPosition)
     {
         //Update the asset position in the database
-        dBAccess.SetAssetLocation(spaceId, assetName, newPosition.x, newPosition.z);
+        dBAccess.SetAssetLocation(assetId, newPosition.x, newPosition.z);
     }
 
     #endregion

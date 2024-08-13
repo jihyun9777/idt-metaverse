@@ -9,8 +9,8 @@ using Dummiesman;
 
 public class InfoNetworking : MonoBehaviour
 {
-    public string jsonUrl = "http://172.21.50.200:8081/shells";
-    public string baseUrl = "http://172.21.50.200:8081/submodels/";
+    public string url = "http://172.26.176.1:8081/shells";
+    public string baseUrl = "http://172.26.176.1:8081/submodels/";
 
     [System.Serializable]
     public class Submodel
@@ -51,7 +51,7 @@ public class InfoNetworking : MonoBehaviour
 
     public IEnumerator GetAssetList(System.Action<List<Asset>> callback)
     {
-        UnityWebRequest www = UnityWebRequest.Get(jsonUrl);
+        UnityWebRequest www = UnityWebRequest.Get(url);
 
         yield return www.SendWebRequest();
 
@@ -62,8 +62,7 @@ public class InfoNetworking : MonoBehaviour
         }
         else
         {
-            Debug.Log("JSON Download successful");
-            Debug.Log("JSON Data: " + www.downloadHandler.text);
+            Debug.Log("Data: " + www.downloadHandler.text);
 
             Result result = JsonUtility.FromJson<Result>(www.downloadHandler.text);
             callback?.Invoke(result.result);
@@ -91,6 +90,25 @@ public class InfoNetworking : MonoBehaviour
             GameObject loadedObj = new OBJLoader().Load(textStream);
 
             callback?.Invoke(loadedObj);
+        }
+    }
+
+    //Method to download OBJ and save it directly to a file
+    public IEnumerator DownloadOBJ(string url, string filePath)
+    {
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Failed to download OBJ: " + webRequest.error);
+            }
+            else
+            {
+                File.WriteAllBytes(filePath, webRequest.downloadHandler.data);
+                Debug.Log("OBJ file saved to: " + filePath);
+            }
         }
     }
 

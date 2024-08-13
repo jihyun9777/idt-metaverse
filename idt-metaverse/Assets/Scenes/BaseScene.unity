@@ -3112,7 +3112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79412f54fc01c4ca9a13829078f210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jsonUrl: http://172.21.50.200:8081/shells
+  url: http://172.21.50.200:8081/shells
   baseUrl: http://172.21.50.200:8081/submodels/
 --- !u!4 &1366973956
 Transform:
@@ -4305,7 +4305,6 @@ MonoBehaviour:
   OnColor: {r: 0, g: 1, b: 0, a: 1}
   OffColor: {r: 1, g: 1, b: 1, a: 1}
   dBAccess: {fileID: 1852751476}
-  infoNetworking: {fileID: 1366973955}
   assetIcon: {fileID: 3995569214938735930, guid: 88ca6059c93adb045a2436443c6fafdf, type: 3}
   obj: {fileID: 0}
   cameraSystem: {fileID: 656499987}
