@@ -12,24 +12,36 @@ public class BaseSceneController : MonoBehaviour
 {
     #region Tab Variables
 
-    bool tapOpen = true;
+    private bool tapOpen = true;
 
     //Open Tab
-    public Button closeButton;
+    public GameObject openPanel;
+    private Button closeButton;
     public TMP_Text nameText;
-    public TMP_Text dimText;
-    public TMP_Text timesText;
+    private TMP_Text dimText;
+    private TMP_Text timesText;
     public TMP_InputField inputX;
     public TMP_InputField inputY;
-    public Button createModeButton;
-
-    public TMP_Text assetsText;
-    public Button addAssetButton;
-    public GameObject openPanel;
+    //public Button createModeButton;
 
     //Close Tab
-    public Button openButton;
     public GameObject closePanel;
+    private Button openButton;
+
+    #endregion
+    #region Button Variables
+
+    private bool buttonTabOpen = false;
+
+    public Button assetButton;
+
+    //Basic Object Button
+    public Button basicObjectButton;
+    public GameObject basicObjectPanel;
+    private Button cubeButton;
+    private Button sphereButton;
+    private Button cylinderButton;
+    private Button planeButton;
 
     #endregion
     #region Tile Variables
@@ -86,15 +98,13 @@ public class BaseSceneController : MonoBehaviour
     {
         #region Tab Start
 
-        openButton.gameObject.SetActive(false);
-        closePanel.SetActive(false);
-
         //Receive values from other Scene
         spaceId = PlayerPrefs.GetInt("SpaceID");
         intX = PlayerPrefs.GetInt("SpaceX"); 
         intY = PlayerPrefs.GetInt("SpaceY"); 
         inputX.text = intX.ToString();
         inputY.text = intY.ToString();
+
         nameText.text = PlayerPrefs.GetString("SpaceName");
         spaceName = PlayerPrefs.GetString("SpaceName");
 
@@ -155,22 +165,22 @@ public class BaseSceneController : MonoBehaviour
             }
         }
 
-        //Avoid UI click or hover
-        if(createMode)
-        {
-            Vector3 mousePosition = Input.mousePosition;
-            Rect uiArea;
+        // //Avoid UI click or hover
+        // if(createMode)
+        // {
+        //     Vector3 mousePosition = Input.mousePosition;
+        //     Rect uiArea;
             
-            if (tapOpen)
-                uiArea = GetPanelRect(openPanel);
-            else
-                uiArea = GetPanelRect(closePanel);
+        //     if (tapOpen)
+        //         uiArea = GetPanelRect(openPanel);
+        //     else
+        //         uiArea = GetPanelRect(closePanel);
 
-            if(!uiArea.Contains(mousePosition))
-                UpdateTilePlacement(mousePosition);
-        }
-        else
-            currentPreviewTile.SetActive(false);
+        //     if(!uiArea.Contains(mousePosition))
+        //         UpdateTilePlacement(mousePosition);
+        // }
+        // else
+        //     currentPreviewTile.SetActive(false);
 
         #endregion
     
@@ -213,22 +223,14 @@ public class BaseSceneController : MonoBehaviour
     {
         tapOpen = !tapOpen; 
 
-        closeButton.gameObject.SetActive(tapOpen);
-        nameText.gameObject.SetActive(tapOpen);
-        dimText.gameObject.SetActive(tapOpen);
-        timesText.gameObject.SetActive(tapOpen);
-        inputX.gameObject.SetActive(tapOpen);
-        inputY.gameObject.SetActive(tapOpen);
-        createModeButton.gameObject.SetActive(tapOpen);
-
-        assetsText.gameObject.SetActive(tapOpen);
-        addAssetButton.gameObject.SetActive(tapOpen);
+        openPanel.gameObject.SetActive(tapOpen);
         SetAssetIconsActive(tapOpen);
 
-        openPanel.gameObject.SetActive(tapOpen);
-
-        openButton.gameObject.SetActive(!tapOpen);
         closePanel.gameObject.SetActive(!tapOpen);
+
+        //Close all button tab
+        //if(!tapOpen)
+            //DeactivateButtonPanel();
     }
 
     private Rect GetPanelRect(GameObject panel)
@@ -239,6 +241,56 @@ public class BaseSceneController : MonoBehaviour
         Vector3 bottomLeft = worldCorners[0];
         Vector3 topRight = worldCorners[2];
         return new Rect(bottomLeft.x, bottomLeft.y, topRight.x - bottomLeft.x, topRight.y - bottomLeft.y);
+    }
+
+    private void DeactivateButtonPanel()
+    {
+        basicObjectPanel.SetActive(false);
+    }
+
+    #endregion
+
+    #region Button Controller
+
+    private void InstantiatePrefab(string folder, string prefabName)
+    {
+        GameObject prefab = Resources.Load<GameObject>(folder + "/" + prefabName);
+        if (prefab != null)
+        {
+            Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogError("Prefab not found: " + prefabName);
+        }
+    }
+
+    //When AssetButton is Clicked
+    public void OnAssetButtonPressed()
+    {
+
+    }
+
+    //When BasicObjectButton is Clicked
+    public void OnBasicObjectPressed()
+    {
+        buttonTabOpen = !buttonTabOpen;
+        basicObjectPanel.SetActive(buttonTabOpen);
+
+        if (buttonTabOpen)
+        {
+            Button cubeButton = GameObject.Find("CubeButton").GetComponent<Button>();
+            cubeButton.onClick.AddListener(() => InstantiatePrefab("BasicObject", "Cube"));
+
+            Button cylinderButton = GameObject.Find("CylinderButton").GetComponent<Button>();
+            cylinderButton.onClick.AddListener(() => InstantiatePrefab("BasicObject", "Cylinder"));
+
+            Button sphereButton = GameObject.Find("SphereButton").GetComponent<Button>();
+            sphereButton.onClick.AddListener(() => InstantiatePrefab("BasicObject", "Sphere"));
+
+            Button planeButton = GameObject.Find("PlaneButton").GetComponent<Button>();
+            planeButton.onClick.AddListener(() => InstantiatePrefab("BasicObject", "Plane"));
+        }
     }
 
     #endregion
@@ -274,26 +326,26 @@ public class BaseSceneController : MonoBehaviour
         }
     }
 
-    public void ChangeCreateMode()
-    {
-        createMode = !createMode;
+    // public void ChangeCreateMode()
+    // {
+    //     createMode = !createMode;
 
-        if (createMode)
-            ChangeButtonColors(OnColor);
-        else
-            ChangeButtonColors(OffColor);
-    }
+    //     if (createMode)
+    //         ChangeButtonColors(OnColor);
+    //     else
+    //         ChangeButtonColors(OffColor);
+    // }
 
-    private void ChangeButtonColors(Color color)
-    {
-        ColorBlock cb = createModeButton.colors;
-        cb.normalColor = color;
-        cb.highlightedColor = color;
-        cb.pressedColor = color;
-        cb.selectedColor = color;
-        cb.disabledColor = color;
-        createModeButton.colors = cb;
-    }
+    // private void ChangeButtonColors(Color color)
+    // {
+    //     ColorBlock cb = createModeButton.colors;
+    //     cb.normalColor = color;
+    //     cb.highlightedColor = color;
+    //     cb.pressedColor = color;
+    //     cb.selectedColor = color;
+    //     cb.disabledColor = color;
+    //     createModeButton.colors = cb;
+    // }
 
     private void UpdateTilePlacement(Vector3 mousePosition)
     {
