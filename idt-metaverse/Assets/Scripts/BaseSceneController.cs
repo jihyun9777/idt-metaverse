@@ -31,17 +31,17 @@ public class BaseSceneController : MonoBehaviour
     #endregion
     #region Button Variables
 
-    private bool buttonTabOpen = false;
-
-    public Button assetButton;
+    //Asset Button
+    private bool assetTabOpen = false;
+    public GameObject assetTab;
 
     //Basic Object Button
-    public Button basicObjectButton;
-    public GameObject basicObjectPanel;
-    private Button cubeButton;
-    private Button sphereButton;
-    private Button cylinderButton;
-    private Button planeButton;
+    private bool basicObjectTabOpen = false;
+    public GameObject basicObjectTab;
+
+    //Furniture Button
+    private bool FurnitureTabOpen = false;
+    public GameObject FurnitureTab;
 
     #endregion
     #region Tile Variables
@@ -139,6 +139,12 @@ public class BaseSceneController : MonoBehaviour
 
     void Update()
     {
+        #region Button Update
+
+
+
+        #endregion
+
         #region Floor Update
 
         if (int.TryParse(inputX.text, out intX))
@@ -229,8 +235,8 @@ public class BaseSceneController : MonoBehaviour
         closePanel.gameObject.SetActive(!tapOpen);
 
         //Close all button tab
-        //if(!tapOpen)
-            //DeactivateButtonPanel();
+        if(!tapOpen)
+            DeactivateAllButtonTab();
     }
 
     private Rect GetPanelRect(GameObject panel)
@@ -243,18 +249,26 @@ public class BaseSceneController : MonoBehaviour
         return new Rect(bottomLeft.x, bottomLeft.y, topRight.x - bottomLeft.x, topRight.y - bottomLeft.y);
     }
 
-    private void DeactivateButtonPanel()
+    //Close all button tab
+    public void DeactivateAllButtonTab()
     {
-        basicObjectPanel.SetActive(false);
+        assetTabOpen = false;
+        assetTab.SetActive(false);
+
+        basicObjectTabOpen = false;
+        basicObjectTab.SetActive(false);
+
+        FurnitureTabOpen = false;
+        FurnitureTab.SetActive(false);
     }
 
     #endregion
 
     #region Button Controller
 
-    private void InstantiatePrefab(string folder, string prefabName)
+    public void InstantiatePrefab(string prefabName)
     {
-        GameObject prefab = Resources.Load<GameObject>(folder + "/" + prefabName);
+        GameObject prefab = Resources.Load<GameObject>(prefabName);
         if (prefab != null)
         {
             Instantiate(prefab, Vector3.zero, Quaternion.identity);
@@ -266,31 +280,34 @@ public class BaseSceneController : MonoBehaviour
     }
 
     //When AssetButton is Clicked
-    public void OnAssetButtonPressed()
+    public void ToggleAssetTab()
     {
+        //Close all tap before openning this tab
+        if(!assetTabOpen)
+            DeactivateAllButtonTab();
 
+        assetTabOpen = !assetTabOpen;
+        assetTab.SetActive(assetTabOpen);
     }
 
     //When BasicObjectButton is Clicked
-    public void OnBasicObjectPressed()
+    public void ToggleBasicObjectTab()
     {
-        buttonTabOpen = !buttonTabOpen;
-        basicObjectPanel.SetActive(buttonTabOpen);
+        if(!basicObjectTabOpen)
+            DeactivateAllButtonTab();
 
-        if (buttonTabOpen)
-        {
-            Button cubeButton = GameObject.Find("CubeButton").GetComponent<Button>();
-            cubeButton.onClick.AddListener(() => InstantiatePrefab("BasicObject", "Cube"));
+        basicObjectTabOpen = !basicObjectTabOpen;
+        basicObjectTab.SetActive(basicObjectTabOpen);
+    }
 
-            Button cylinderButton = GameObject.Find("CylinderButton").GetComponent<Button>();
-            cylinderButton.onClick.AddListener(() => InstantiatePrefab("BasicObject", "Cylinder"));
+    //When FurnitureButton is Clicked
+    public void ToggleFurnitureTab()
+    {
+        if(!FurnitureTabOpen)
+            DeactivateAllButtonTab();
 
-            Button sphereButton = GameObject.Find("SphereButton").GetComponent<Button>();
-            sphereButton.onClick.AddListener(() => InstantiatePrefab("BasicObject", "Sphere"));
-
-            Button planeButton = GameObject.Find("PlaneButton").GetComponent<Button>();
-            planeButton.onClick.AddListener(() => InstantiatePrefab("BasicObject", "Plane"));
-        }
+        FurnitureTabOpen = !FurnitureTabOpen;
+        FurnitureTab.SetActive(FurnitureTabOpen);
     }
 
     #endregion

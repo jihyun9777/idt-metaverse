@@ -70,9 +70,11 @@
     <Compile Include="Assets\Scripts\CameraSystem.cs" />
     <Compile Include="Assets\DownloadAssets\Fonts\Script\scriptTexttest.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
+    <Compile Include="Assets\Scripts\BasicObjectScripts\CylinderController.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
     <Compile Include="Assets\Scripts\MainSceneScripts\CreateObjectController.cs" />
+    <Compile Include="Assets\Scripts\BasicObjectScripts\CubeController.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\Scripts\SpaceMenuController.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
@@ -90,13 +92,13 @@
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
+    <Compile Include="Assets\Scripts\BasicObjectScripts\PlaneController.cs" />
     <Compile Include="Assets\Scripts\MainSceneScripts\PanelController.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\ChatController.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
-    <Compile Include="Assets\Scripts\BasicObjectScripts\Cube.cs" />
     <Compile Include="Assets\Scripts\OpenFile.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
