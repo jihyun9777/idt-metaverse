@@ -68,6 +68,7 @@
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
     <Compile Include="Assets\Scripts\MainSceneScripts\ObjectController.cs" />
     <Compile Include="Assets\Scripts\CameraSystem.cs" />
+    <Compile Include="Assets\Scripts\BasicObjectScripts\ConveyorController.cs" />
     <Compile Include="Assets\DownloadAssets\Fonts\Script\scriptTexttest.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
     <Compile Include="Assets\Scripts\BasicObjectScripts\CylinderController.cs" />

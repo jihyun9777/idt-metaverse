@@ -39,9 +39,13 @@ public class BaseSceneController : MonoBehaviour
     private bool basicObjectTabOpen = false;
     public GameObject basicObjectTab;
 
-    //Furniture Button
-    private bool FurnitureTabOpen = false;
-    public GameObject FurnitureTab;
+    //Storage Button
+    private bool storageTabOpen = false;
+    public GameObject storageTab;
+
+    //Storage Button
+    private bool conveyorTabOpen = false;
+    public GameObject conveyorTab;
 
     #endregion
     #region Tile Variables
@@ -258,26 +262,16 @@ public class BaseSceneController : MonoBehaviour
         basicObjectTabOpen = false;
         basicObjectTab.SetActive(false);
 
-        FurnitureTabOpen = false;
-        FurnitureTab.SetActive(false);
+        storageTabOpen = false;
+        storageTab.SetActive(false);
+
+        conveyorTabOpen = false;
+        conveyorTab.SetActive(false);
     }
 
     #endregion
 
     #region Button Controller
-
-    public void InstantiatePrefab(string prefabName)
-    {
-        GameObject prefab = Resources.Load<GameObject>(prefabName);
-        if (prefab != null)
-        {
-            Instantiate(prefab, Vector3.zero, Quaternion.identity);
-        }
-        else
-        {
-            Debug.LogError("Prefab not found: " + prefabName);
-        }
-    }
 
     //When AssetButton is Clicked
     public void ToggleAssetTab()
@@ -300,14 +294,73 @@ public class BaseSceneController : MonoBehaviour
         basicObjectTab.SetActive(basicObjectTabOpen);
     }
 
-    //When FurnitureButton is Clicked
-    public void ToggleFurnitureTab()
+    //Instantiate Basic Object
+    public void InstantiateBasicObject(string name)
     {
-        if(!FurnitureTabOpen)
+        GameObject basicObject = Resources.Load<GameObject>(name);
+        if (basicObject != null)
+        {
+            Instantiate(basicObject, Vector3.zero, Quaternion.identity);
+        }
+        else    Debug.LogError("Basic Object not found: " + name);
+    }
+
+    //When StorageButton is Clicked
+    public void ToggleStorageTab()
+    {
+        if(!storageTabOpen)
             DeactivateAllButtonTab();
 
-        FurnitureTabOpen = !FurnitureTabOpen;
-        FurnitureTab.SetActive(FurnitureTabOpen);
+        storageTabOpen = !storageTabOpen;
+        storageTab.SetActive(storageTabOpen);
+    }
+
+    //Instantiate Storage Object with BoxCollider and CubeController script
+    public void InstantiateStorage(string name)
+    {
+        GameObject temp = Resources.Load<GameObject>(name);
+        if (temp != null)
+        {
+            GameObject storageObjectPrefab = Instantiate(temp, Vector3.zero, Quaternion.identity);
+            GameObject storageObject = storageObjectPrefab.transform.GetChild(0).gameObject;
+
+            BoxCollider boxCollider = storageObject.AddComponent<BoxCollider>();
+            Renderer renderer = storageObject.GetComponent<Renderer>();
+            boxCollider.size = renderer.bounds.size;
+
+            //Adjust the center of the BoxCollider so it matches the object's position
+            Vector3 colliderCenter = boxCollider.center;
+            colliderCenter.y += boxCollider.size.y / 2 - renderer.bounds.extents.y;
+            boxCollider.center = colliderCenter;
+
+            storageObject.AddComponent<CubeController>();
+        }
+        else    Debug.LogError("Storage Object not found: " + name);
+    }
+
+    //When ConveyorButton is Clicked
+    public void ToggleConveyorTab()
+    {
+        if(!conveyorTabOpen)
+            DeactivateAllButtonTab();
+
+        conveyorTabOpen = !conveyorTabOpen;
+        conveyorTab.SetActive(conveyorTabOpen);
+    }
+
+    public void InstantiateConveyor(string name)
+    {
+        GameObject temp = Resources.Load<GameObject>(name);
+        if (temp != null)
+        {
+            GameObject conveyorObject = Instantiate(temp, Vector3.zero, Quaternion.identity);
+            conveyorObject.AddComponent<BoxCollider>();
+            conveyorObject.AddComponent<ConveyorController>();
+        }
+        else
+        {
+            Debug.LogError("Conveyor Object not found: " + name);
+        }
     }
 
     #endregion

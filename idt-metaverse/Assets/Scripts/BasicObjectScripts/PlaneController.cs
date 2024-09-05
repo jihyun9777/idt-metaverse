@@ -9,6 +9,7 @@ public class PlaneController : MonoBehaviour
     public float doubleClickTimeLimit = 0.3f; 
     private float lastClickTime = -1f; 
     private GameObject property;
+    private Vector3 offset;
 
     private Button closeButton;
 
@@ -33,13 +34,15 @@ public class PlaneController : MonoBehaviour
 
     private Button deleteButton;
 
+    #region Unity Methods
+
     void Start()
     {
-        GameObject cubePropertyPrefab = Resources.Load<GameObject>("BasicObjects/" + "PlaneProperty");
+        GameObject planePropertyPrefab = Resources.Load<GameObject>("BasicObjects/" + "PlaneProperty");
 
-        if (cubePropertyPrefab != null)
+        if (planePropertyPrefab != null)
         {
-            property = Instantiate(cubePropertyPrefab, transform.position, Quaternion.identity);
+            property = Instantiate(planePropertyPrefab, transform.position, Quaternion.identity);
 
             closeButton = property.transform.Find("CloseButton").GetComponent<Button>();
             closeButton.onClick.AddListener(() => CloseTab());
@@ -94,17 +97,37 @@ public class PlaneController : MonoBehaviour
         }
     }
 
+    #endregion
+
     void OnMouseDown()
     {
         //Get current time
         float timeSinceLastClick = Time.time - lastClickTime;
-
         //Check if it is doubleclick
         if (timeSinceLastClick <= doubleClickTimeLimit)
             OpenTab();
-        
         //Update lastClickTime
         lastClickTime = Time.time;
+
+        offset = transform.position - GetMouseWorldPosition();
+    }
+
+    void OnMouseDrag()
+    {
+        Vector3 newPosition = GetMouseWorldPosition() + offset;
+        transform.position = newPosition;
+
+        //Update input fields
+        xPosInputField.text = newPosition.x.ToString();
+        yPosInputField.text = newPosition.y.ToString();
+        zPosInputField.text = newPosition.z.ToString();
+    }
+
+    private Vector3 GetMouseWorldPosition()
+    {
+        Vector3 mouseScreenPosition = Input.mousePosition;
+        mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
+        return Camera.main.ScreenToWorldPoint(mouseScreenPosition);
     }
 
     private void OpenTab()
@@ -135,7 +158,7 @@ public class PlaneController : MonoBehaviour
 
     private void UpdateDimension()
     {
-        float lDim, wDim, hDim;
+        float lDim, wDim;
 
         if (float.TryParse(lDimInputField.text, out lDim) && float.TryParse(wDimInputField.text, out wDim))
         {

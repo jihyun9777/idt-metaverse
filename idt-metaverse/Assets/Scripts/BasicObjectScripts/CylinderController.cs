@@ -9,6 +9,7 @@ public class CylinderController : MonoBehaviour
     public float doubleClickTimeLimit = 0.3f; 
     private float lastClickTime = -1f; 
     private GameObject property;
+    private Vector3 offset;
 
     private Button closeButton;
 
@@ -34,13 +35,15 @@ public class CylinderController : MonoBehaviour
 
     private Button deleteButton;
 
+    #region Unity Methods
+
     void Start()
     {
-        GameObject cubePropertyPrefab = Resources.Load<GameObject>("BasicObjects/" + "CubeProperty");
+        GameObject cylinderPropertyPrefab = Resources.Load<GameObject>("BasicObjects/" + "CubeProperty");
 
-        if (cubePropertyPrefab != null)
+        if (cylinderPropertyPrefab != null)
         {
-            property = Instantiate(cubePropertyPrefab, transform.position, Quaternion.identity);
+            property = Instantiate(cylinderPropertyPrefab, transform.position, Quaternion.identity);
             
             closeButton = property.transform.Find("CloseButton").GetComponent<Button>();
             closeButton.onClick.AddListener(() => CloseTab());
@@ -98,17 +101,37 @@ public class CylinderController : MonoBehaviour
         }
     }
 
+    #endregion
+
     void OnMouseDown()
     {
         //Get current time
         float timeSinceLastClick = Time.time - lastClickTime;
-
         //Check if it is doubleclick
         if (timeSinceLastClick <= doubleClickTimeLimit)
             OpenTab();
-        
         //Update lastClickTime
         lastClickTime = Time.time;
+
+        offset = transform.position - GetMouseWorldPosition();
+    }
+
+    void OnMouseDrag()
+    {
+        Vector3 newPosition = GetMouseWorldPosition() + offset;
+        transform.position = newPosition;
+
+        //Update input fields
+        xPosInputField.text = newPosition.x.ToString();
+        yPosInputField.text = newPosition.y.ToString();
+        zPosInputField.text = newPosition.z.ToString();
+    }
+
+    private Vector3 GetMouseWorldPosition()
+    {
+        Vector3 mouseScreenPosition = Input.mousePosition;
+        mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
+        return Camera.main.ScreenToWorldPoint(mouseScreenPosition);
     }
 
     private void OpenTab()
