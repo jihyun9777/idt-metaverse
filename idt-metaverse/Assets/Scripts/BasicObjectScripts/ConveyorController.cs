@@ -6,12 +6,24 @@ using TMPro;
 
 public class ConveyorController : MonoBehaviour
 {
+    private BaseSceneController baseSceneController;
+
     public float doubleClickTimeLimit = 0.3f; 
     private float lastClickTime = -1f; 
+
     private GameObject property;
     private Vector3 offset;
+
     private bool positiveDir = true;
     private float speed = 1f;
+
+    private Vector3 initialPosition;
+    private bool returnToInitialPosition = false;
+
+    Color activeColor = new Color32(0xD1, 0xD1, 0xD1, 0xFF); 
+    Color defaultColor = new Color32(0x51, 0x51, 0x51, 0xFF);
+
+    #region Button Variables
 
     private Button closeButton;
 
@@ -44,10 +56,16 @@ public class ConveyorController : MonoBehaviour
 
     private Button deleteButton;
 
-    #region Unity Methods
+    #endregion
+
+    #region Start
 
     void Start()
     {
+        baseSceneController = FindObjectOfType<BaseSceneController>();
+
+        initialPosition = transform.position;
+
         GameObject conveyorProperty = Resources.Load<GameObject>("Conveyors/" + "ConveyorProperty");
 
         if (conveyorProperty != null)
@@ -104,11 +122,11 @@ public class ConveyorController : MonoBehaviour
             //Direction Inputs
             positiveButton = property.transform.Find("Direction/PositiveButton").GetComponent<Button>();
             negativeButton = property.transform.Find("Direction/NegativeButton").GetComponent<Button>();
-            positiveButton.onClick.AddListener(() => positiveDir = true);
-            negativeButton.onClick.AddListener(() => positiveDir = false);
+            positiveButton.onClick.AddListener(() => UpdateDirection(positiveButton, true));
+            negativeButton.onClick.AddListener(() => UpdateDirection(negativeButton, false));
 
             //Speed Inputs
-            speedInputField = property.transform.Find("Speed/speedInputField").GetComponent<TMP_InputField>();
+            speedInputField = property.transform.Find("Speed/SpeedInputField").GetComponent<TMP_InputField>();
             speedInputField.text = "1";
             speedInputField.onEndEdit.AddListener(text => float.TryParse(text, out speed)); 
 
@@ -121,12 +139,25 @@ public class ConveyorController : MonoBehaviour
         }
     }
 
+    #endregion
+
     void Update()
     {
-        
+        if (baseSceneController.playMode && !baseSceneController.pauseMode)
+        {
+            returnToInitialPosition = false;
+            float direction = positiveDir ? 1f : -1f;
+            transform.Translate(Vector3.forward * speed * direction * Time.deltaTime);
+        }
+        else if (baseSceneController.playMode && baseSceneController.pauseMode){}
+        else if (!baseSceneController.playMode && !returnToInitialPosition)
+        {
+            transform.position = initialPosition;
+            returnToInitialPosition = true;
+        }
     }
 
-    #endregion
+    #region Mouse Interaction
 
     void OnMouseDown()
     {
@@ -159,6 +190,8 @@ public class ConveyorController : MonoBehaviour
         return Camera.main.ScreenToWorldPoint(mouseScreenPosition);
     }
 
+    #endregion
+
     private void OpenTab()
     {
         property.SetActive(true);
@@ -182,6 +215,7 @@ public class ConveyorController : MonoBehaviour
         if (float.TryParse(xPosInputField.text, out xPos) && float.TryParse(yPosInputField.text, out yPos) && float.TryParse(zPosInputField.text, out zPos))
         {
             transform.position = new Vector3(xPos, yPos, zPos);
+            initialPosition = transform.position;
         }
     }
 
@@ -219,4 +253,30 @@ public class ConveyorController : MonoBehaviour
     //     }
     // }
 
+    private void UpdateDirection(Button clickedButton, bool dir)
+    {
+        positiveDir = dir;
+
+        Button otherButton = clickedButton == positiveButton ? negativeButton : positiveButton;
+
+        ColorBlock clickedColorBlock = clickedButton.colors;
+        ColorBlock otherColorBlock = otherButton.colors;
+
+        //Change clicked button to activeColor
+        clickedColorBlock.normalColor = activeColor;
+        clickedColorBlock.highlightedColor = activeColor;
+        clickedColorBlock.pressedColor = activeColor;
+        clickedColorBlock.selectedColor = activeColor;
+        clickedColorBlock.disabledColor = activeColor;
+
+        //Change other button to defaultColor
+        otherColorBlock.normalColor = defaultColor;
+        otherColorBlock.highlightedColor = defaultColor;
+        otherColorBlock.pressedColor = defaultColor;
+        otherColorBlock.selectedColor = defaultColor;
+        otherColorBlock.disabledColor = defaultColor;
+
+        clickedButton.colors = clickedColorBlock;
+        otherButton.colors = otherColorBlock;
+    }
 }

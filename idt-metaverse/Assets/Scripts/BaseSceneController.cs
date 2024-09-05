@@ -12,6 +12,9 @@ public class BaseSceneController : MonoBehaviour
 {
     #region Tab Variables
 
+    public bool playMode = false;
+    public bool pauseMode = false;
+
     private bool tapOpen = true;
 
     //Open Tab
@@ -229,6 +232,25 @@ public class BaseSceneController : MonoBehaviour
 
     #region Tab Controller
 
+    public void PlayOn()
+    {
+        playMode = true;
+
+        if (pauseMode)
+            pauseMode = false;
+    }
+    
+    public void PlayOff()
+    {
+        playMode = false;
+    }
+
+    public void PauseOn()
+    {
+        if (playMode)
+            pauseMode = true;
+    }
+
     public void ToggleTab()
     {
         tapOpen = !tapOpen; 
@@ -239,7 +261,7 @@ public class BaseSceneController : MonoBehaviour
         closePanel.gameObject.SetActive(!tapOpen);
 
         //Close all button tab
-        if(!tapOpen)
+        if (!tapOpen)
             DeactivateAllButtonTab();
     }
 
@@ -277,7 +299,7 @@ public class BaseSceneController : MonoBehaviour
     public void ToggleAssetTab()
     {
         //Close all tap before openning this tab
-        if(!assetTabOpen)
+        if (!assetTabOpen)
             DeactivateAllButtonTab();
 
         assetTabOpen = !assetTabOpen;
@@ -287,7 +309,7 @@ public class BaseSceneController : MonoBehaviour
     //When BasicObjectButton is Clicked
     public void ToggleBasicObjectTab()
     {
-        if(!basicObjectTabOpen)
+        if (!basicObjectTabOpen)
             DeactivateAllButtonTab();
 
         basicObjectTabOpen = !basicObjectTabOpen;
@@ -308,7 +330,7 @@ public class BaseSceneController : MonoBehaviour
     //When StorageButton is Clicked
     public void ToggleStorageTab()
     {
-        if(!storageTabOpen)
+        if (!storageTabOpen)
             DeactivateAllButtonTab();
 
         storageTabOpen = !storageTabOpen;
@@ -341,7 +363,7 @@ public class BaseSceneController : MonoBehaviour
     //When ConveyorButton is Clicked
     public void ToggleConveyorTab()
     {
-        if(!conveyorTabOpen)
+        if (!conveyorTabOpen)
             DeactivateAllButtonTab();
 
         conveyorTabOpen = !conveyorTabOpen;
