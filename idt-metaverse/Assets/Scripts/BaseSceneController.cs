@@ -343,17 +343,19 @@ public class BaseSceneController : MonoBehaviour
         GameObject temp = Resources.Load<GameObject>(name);
         if (temp != null)
         {
-            GameObject storageObjectPrefab = Instantiate(temp, Vector3.zero, Quaternion.identity);
-            GameObject storageObject = storageObjectPrefab.transform.GetChild(0).gameObject;
+            GameObject storageObject = Instantiate(temp, Vector3.zero, Quaternion.identity);
 
+            //Calculate bounds of every child objects
+            Bounds combinedBounds = new Bounds(storageObject.transform.position, Vector3.zero);
+            foreach (Renderer renderer in storageObject.GetComponentsInChildren<Renderer>())
+            {
+                combinedBounds.Encapsulate(renderer.bounds);
+            }
+
+            //Create BoxCollider
             BoxCollider boxCollider = storageObject.AddComponent<BoxCollider>();
-            Renderer renderer = storageObject.GetComponent<Renderer>();
-            boxCollider.size = renderer.bounds.size;
-
-            //Adjust the center of the BoxCollider so it matches the object's position
-            Vector3 colliderCenter = boxCollider.center;
-            colliderCenter.y += boxCollider.size.y / 2 - renderer.bounds.extents.y;
-            boxCollider.center = colliderCenter;
+            boxCollider.center = combinedBounds.center - storageObject.transform.position;
+            boxCollider.size = combinedBounds.size;
 
             storageObject.AddComponent<CubeController>();
         }
@@ -376,7 +378,19 @@ public class BaseSceneController : MonoBehaviour
         if (temp != null)
         {
             GameObject conveyorObject = Instantiate(temp, Vector3.zero, Quaternion.identity);
-            conveyorObject.AddComponent<BoxCollider>();
+
+            //Calculate bounds of every child objects
+            Bounds combinedBounds = new Bounds(conveyorObject.transform.position, Vector3.zero);
+            foreach (Renderer renderer in conveyorObject.GetComponentsInChildren<Renderer>())
+            {
+                combinedBounds.Encapsulate(renderer.bounds);
+            }
+
+            //Create BoxCollider
+            BoxCollider boxCollider = conveyorObject.AddComponent<BoxCollider>();
+            boxCollider.center = combinedBounds.center - conveyorObject.transform.position;
+            boxCollider.size = combinedBounds.size;
+
             conveyorObject.AddComponent<ConveyorController>();
         }
         else

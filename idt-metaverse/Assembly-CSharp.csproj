@@ -143,6 +143,7 @@
     <None Include="Assets\DownloadAssets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\DownloadAssets\Fonts\Documentation\JazzCreateBubble_VersionHistory_1.1.txt" />
     <None Include="Assets\DownloadAssets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\DownloadAssets\ShelvesModels\Readme.txt" />
     <None Include="Assets\DownloadAssets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\DownloadAssets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\DownloadAssets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />

@@ -17,7 +17,8 @@ public class ConveyorController : MonoBehaviour
     private bool positiveDir = true;
     private float speed = 1f;
 
-    private Vector3 initialPosition;
+    private Transform objectOnConveyor;
+    private Vector3 objectInitialPosition;
     private bool returnToInitialPosition = false;
 
     Color activeColor = new Color32(0xD1, 0xD1, 0xD1, 0xFF); 
@@ -58,13 +59,11 @@ public class ConveyorController : MonoBehaviour
 
     #endregion
 
-    #region Start
+    #region Unity Methods
 
     void Start()
     {
         baseSceneController = FindObjectOfType<BaseSceneController>();
-
-        initialPosition = transform.position;
 
         GameObject conveyorProperty = Resources.Load<GameObject>("Conveyors/" + "ConveyorProperty");
 
@@ -139,23 +138,44 @@ public class ConveyorController : MonoBehaviour
         }
     }
 
-    #endregion
-
     void Update()
     {
         if (baseSceneController.playMode && !baseSceneController.pauseMode)
         {
             returnToInitialPosition = false;
             float direction = positiveDir ? 1f : -1f;
-            transform.Translate(Vector3.forward * speed * direction * Time.deltaTime);
+
+            BoxCollider boxCollider = GetComponent<BoxCollider>();
+
+            Vector3 boxSize = new Vector3(boxCollider.size.x, 0.2f, boxCollider.size.z);
+            Vector3 boxOrigin = transform.position + new Vector3(0, boxCollider.size.y, 0);
+
+            //Detect the object on top of the conveyor
+            RaycastHit hit;
+            if (Physics.BoxCast(boxOrigin, boxSize, Vector3.up, out hit))
+            {
+                //Store the object and its initial position
+                if (objectOnConveyor == null)
+                {
+                    objectOnConveyor = hit.transform;
+                    objectInitialPosition = objectOnConveyor.position;
+                    Debug.Log("tlqkf");
+                }
+
+                objectOnConveyor.Translate(Vector3.forward * speed * direction * Time.deltaTime);
+            }
         }
-        else if (baseSceneController.playMode && baseSceneController.pauseMode){}
-        else if (!baseSceneController.playMode && !returnToInitialPosition)
+        else if (baseSceneController.playMode && baseSceneController.pauseMode) {}
+        else if (!baseSceneController.playMode && !returnToInitialPosition && objectOnConveyor != null)
         {
-            transform.position = initialPosition;
+
+            objectOnConveyor.position = objectInitialPosition;
             returnToInitialPosition = true;
+            objectOnConveyor = null;
         }
     }
+
+    #endregion
 
     #region Mouse Interaction
 
@@ -192,6 +212,8 @@ public class ConveyorController : MonoBehaviour
 
     #endregion
 
+    #region Tab Control
+
     private void OpenTab()
     {
         property.SetActive(true);
@@ -208,6 +230,10 @@ public class ConveyorController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    #endregion
+
+    #region Update Variables
+
     private void UpdatePosition()
     {
         float xPos, yPos, zPos;
@@ -215,7 +241,6 @@ public class ConveyorController : MonoBehaviour
         if (float.TryParse(xPosInputField.text, out xPos) && float.TryParse(yPosInputField.text, out yPos) && float.TryParse(zPosInputField.text, out zPos))
         {
             transform.position = new Vector3(xPos, yPos, zPos);
-            initialPosition = transform.position;
         }
     }
 
@@ -279,4 +304,8 @@ public class ConveyorController : MonoBehaviour
         clickedButton.colors = clickedColorBlock;
         otherButton.colors = otherColorBlock;
     }
+
+    #endregion
+
+
 }
