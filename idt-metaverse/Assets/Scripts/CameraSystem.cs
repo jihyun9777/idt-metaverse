@@ -53,7 +53,7 @@ public class CameraSystem : MonoBehaviour
 
         Vector3 moveDir = transform.right * inputDir.x + transform.up * inputDir.y + transform.forward * inputDir.z;
 
-        float moveSpeed = 30f;
+        float moveSpeed = 600f;
         Vector3 newPosition = transform.position + moveDir * moveSpeed * Time.deltaTime;
 
         // Can't go lower than ground

@@ -46,9 +46,13 @@ public class BaseSceneController : MonoBehaviour
     private bool storageTabOpen = false;
     public GameObject storageTab;
 
-    //Storage Button
+    //Conveyor Button
     private bool conveyorTabOpen = false;
     public GameObject conveyorTab;
+
+    //Feeder Button
+    private bool feederTabOpen = false;
+    public GameObject feederTab;
 
     #endregion
     #region Tile Variables
@@ -289,6 +293,9 @@ public class BaseSceneController : MonoBehaviour
 
         conveyorTabOpen = false;
         conveyorTab.SetActive(false);
+
+        feederTabOpen = false;
+        feederTab.SetActive(false);
     }
 
     #endregion
@@ -316,17 +323,6 @@ public class BaseSceneController : MonoBehaviour
         basicObjectTab.SetActive(basicObjectTabOpen);
     }
 
-    //Instantiate Basic Object
-    public void InstantiateBasicObject(string name)
-    {
-        GameObject basicObject = Resources.Load<GameObject>(name);
-        if (basicObject != null)
-        {
-            Instantiate(basicObject, Vector3.zero, Quaternion.identity);
-        }
-        else    Debug.LogError("Basic Object not found: " + name);
-    }
-
     //When StorageButton is Clicked
     public void ToggleStorageTab()
     {
@@ -335,31 +331,6 @@ public class BaseSceneController : MonoBehaviour
 
         storageTabOpen = !storageTabOpen;
         storageTab.SetActive(storageTabOpen);
-    }
-
-    //Instantiate Storage Object with BoxCollider and CubeController script
-    public void InstantiateStorage(string name)
-    {
-        GameObject temp = Resources.Load<GameObject>(name);
-        if (temp != null)
-        {
-            GameObject storageObject = Instantiate(temp, Vector3.zero, Quaternion.identity);
-
-            //Calculate bounds of every child objects
-            Bounds combinedBounds = new Bounds(storageObject.transform.position, Vector3.zero);
-            foreach (Renderer renderer in storageObject.GetComponentsInChildren<Renderer>())
-            {
-                combinedBounds.Encapsulate(renderer.bounds);
-            }
-
-            //Create BoxCollider
-            BoxCollider boxCollider = storageObject.AddComponent<BoxCollider>();
-            boxCollider.center = combinedBounds.center - storageObject.transform.position;
-            boxCollider.size = combinedBounds.size;
-
-            storageObject.AddComponent<CubeController>();
-        }
-        else    Debug.LogError("Storage Object not found: " + name);
     }
 
     //When ConveyorButton is Clicked
@@ -372,30 +343,49 @@ public class BaseSceneController : MonoBehaviour
         conveyorTab.SetActive(conveyorTabOpen);
     }
 
-    public void InstantiateConveyor(string name)
+    //When ConveyorButton is Clicked
+    public void ToggleFeederTab()
+    {
+        if (!feederTabOpen)
+            DeactivateAllButtonTab();
+
+        feederTabOpen = !feederTabOpen;
+        feederTab.SetActive(feederTabOpen);
+    }
+
+    //Instantiate Basic Object
+    public void InstantiateBasicObject(string name)
+    {
+        GameObject basicObject = Resources.Load<GameObject>(name);
+        if (basicObject != null)
+        {
+            Instantiate(basicObject, Vector3.zero, Quaternion.identity);
+        }
+        else    Debug.LogError("Basic Object not found: " + name);
+    }
+
+    public void InstantiateObject(string name)
     {
         GameObject temp = Resources.Load<GameObject>(name);
         if (temp != null)
         {
-            GameObject conveyorObject = Instantiate(temp, Vector3.zero, Quaternion.identity);
+            GameObject instantiatedObject = Instantiate(temp, Vector3.zero, Quaternion.identity);
 
             //Calculate bounds of every child objects
-            Bounds combinedBounds = new Bounds(conveyorObject.transform.position, Vector3.zero);
-            foreach (Renderer renderer in conveyorObject.GetComponentsInChildren<Renderer>())
+            Bounds combinedBounds = new Bounds(instantiatedObject.transform.position, Vector3.zero);
+            foreach (Renderer renderer in instantiatedObject.GetComponentsInChildren<Renderer>())
             {
                 combinedBounds.Encapsulate(renderer.bounds);
             }
 
             //Create BoxCollider
-            BoxCollider boxCollider = conveyorObject.AddComponent<BoxCollider>();
-            boxCollider.center = combinedBounds.center - conveyorObject.transform.position;
+            BoxCollider boxCollider = instantiatedObject.AddComponent<BoxCollider>();
+            boxCollider.center = combinedBounds.center - instantiatedObject.transform.position;
             boxCollider.size = combinedBounds.size;
-
-            conveyorObject.AddComponent<ConveyorController>();
         }
         else
         {
-            Debug.LogError("Conveyor Object not found: " + name);
+            Debug.LogError("Object not found: " + name);
         }
     }
 
