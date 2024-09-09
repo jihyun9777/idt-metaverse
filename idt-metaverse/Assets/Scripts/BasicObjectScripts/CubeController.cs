@@ -183,7 +183,7 @@ public class CubeController : MonoBehaviour
             transform.rotation = Quaternion.Euler(xRot, yRot, zRot);
         }
     }
-
+    
     // private void UpdateScale()
     // {
     //     float xScale, yScale, zScale;

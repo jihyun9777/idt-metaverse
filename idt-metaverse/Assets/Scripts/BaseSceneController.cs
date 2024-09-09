@@ -359,7 +359,15 @@ public class BaseSceneController : MonoBehaviour
         GameObject basicObject = Resources.Load<GameObject>(name);
         if (basicObject != null)
         {
-            Instantiate(basicObject, Vector3.zero, Quaternion.identity);
+            GameObject instantiatedObject = Instantiate(basicObject, Vector3.zero, Quaternion.identity);
+
+            //Calculate the object's height
+            Renderer renderer = instantiatedObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Vector3 adjustedPosition = new Vector3(0, renderer.bounds.extents.y, 0);
+                instantiatedObject.transform.position = adjustedPosition;
+            }
         }
         else    Debug.LogError("Basic Object not found: " + name);
     }
@@ -383,10 +391,7 @@ public class BaseSceneController : MonoBehaviour
             boxCollider.center = combinedBounds.center - instantiatedObject.transform.position;
             boxCollider.size = combinedBounds.size;
         }
-        else
-        {
-            Debug.LogError("Object not found: " + name);
-        }
+        else    Debug.LogError("Object not found: " + name);
     }
 
     #endregion
@@ -446,7 +451,7 @@ public class BaseSceneController : MonoBehaviour
     private void UpdateTilePlacement(Vector3 mousePosition)
     {
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero); 
+        Plane groundPlane = new Plane(Vector3.up, new Vector3(0f, -1f, 0f)); 
 
         //When hovered on the ground, create preview tile
         if (groundPlane.Raycast(ray, out float enter))

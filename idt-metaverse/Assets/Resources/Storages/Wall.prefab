@@ -118,3 +118,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5142a0ebc3cbe1441a14837249add4a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  doubleClickTimeLimit: 0.3
