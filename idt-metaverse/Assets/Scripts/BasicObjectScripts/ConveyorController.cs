@@ -140,6 +140,7 @@ public class ConveyorController : MonoBehaviour
 
     void Update()
     {
+        //If playMode
         if (baseSceneController.playMode && !baseSceneController.pauseMode)
         {
             returnToInitialPosition = false;
@@ -165,6 +166,7 @@ public class ConveyorController : MonoBehaviour
                 objectOnConveyor.Translate(Vector3.forward * speed * direction * Time.deltaTime);
             }
         }
+        //If pauseMode
         else if (baseSceneController.playMode && baseSceneController.pauseMode) {}
         else if (!baseSceneController.playMode && !returnToInitialPosition && objectOnConveyor != null)
         {

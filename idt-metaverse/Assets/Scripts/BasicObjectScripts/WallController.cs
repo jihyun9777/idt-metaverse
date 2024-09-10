@@ -12,6 +12,8 @@ public class WallController : MonoBehaviour
     private GameObject property;
     private Vector3 offset;
 
+    #region Button Variables
+
     private Button closeButton;
 
     //Position
@@ -35,6 +37,8 @@ public class WallController : MonoBehaviour
     // private TMP_InputField zScaleInputField;
 
     private Button deleteButton;
+
+    #endregion
 
     #region Unity Methods
 
@@ -91,7 +95,7 @@ public class WallController : MonoBehaviour
             // zScaleInputField.text = "1";
             // xScaleInputField.onEndEdit.AddListener(delegate { UpdateScale(); });
             // yScaleInputField.onEndEdit.AddListener(delegate { UpdateScale(); });
-            // zScaleInputField.onEndEdit.AddListener(delegate { UpdateScale(); });     
+            // zScaleInputField.onEndEdit.AddListener(delegate { UpdateScale(); });   
 
             deleteButton = property.transform.Find("DeleteButton").GetComponent<Button>();
             deleteButton.onClick.AddListener(() => DeleteTab()); 
@@ -103,6 +107,8 @@ public class WallController : MonoBehaviour
     }
 
     #endregion
+
+    #region Mouse Interaction
 
     void OnMouseDown()
     {
@@ -120,7 +126,9 @@ public class WallController : MonoBehaviour
     void OnMouseDrag()
     {
         Vector3 newPosition = GetMouseWorldPosition() + offset;
+
         transform.position = newPosition;
+        newPosition.y -= transform.localScale.y / 2f;
 
         //Update input fields
         xPosInputField.text = newPosition.x.ToString();
@@ -134,6 +142,36 @@ public class WallController : MonoBehaviour
         mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
         return Camera.main.ScreenToWorldPoint(mouseScreenPosition);
     }
+
+    void OnMouseUp()
+    {
+        Vector3 boxSize = new Vector3(transform.localScale.x, 10f, transform.localScale.z);
+
+        Vector3 boxOrigin = transform.position - new Vector3(0f, transform.localScale.y / 2f, 0f);
+
+        RaycastHit hit;
+        if (Physics.BoxCast(boxOrigin, boxSize, Vector3.down, out hit, Quaternion.identity, 20f))
+        {
+            if (hit.collider.CompareTag("Tile"))
+            {
+                //Round Wall position
+                float roundedX = Mathf.Round(transform.position.x / 50f) * 50f;
+                float roundedZ = Mathf.Round(transform.position.z / 50f) * 50f;
+
+                transform.position = new Vector3(roundedX, transform.localScale.y / 2f, roundedZ);
+
+                //Updat InputField
+                xPosInputField.text = roundedX.ToString();
+                yPosInputField.text = "0";
+                zPosInputField.text = roundedZ.ToString();
+                Debug.Log("here");
+            }
+        }
+    }
+
+    #endregion
+
+    #region Tab Control
 
     private void OpenTab()
     {
@@ -151,13 +189,17 @@ public class WallController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    #endregion
+
+    #region Update Variables
+
     private void UpdatePosition()
     {
         float xPos, yPos, zPos;
 
         if (float.TryParse(xPosInputField.text, out xPos) && float.TryParse(yPosInputField.text, out yPos) && float.TryParse(zPosInputField.text, out zPos))
         {
-            transform.position = new Vector3(xPos, yPos, zPos);
+            transform.position = new Vector3(xPos, yPos + transform.localScale.y / 2f, zPos);
         }
     }
 
@@ -194,4 +236,6 @@ public class WallController : MonoBehaviour
     //         transform.localScale = new Vector3(xScale, yScale, zScale);
     //     }
     // }
+
+    #endregion
 }

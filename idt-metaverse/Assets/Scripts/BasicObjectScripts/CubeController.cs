@@ -44,6 +44,8 @@ public class CubeController : MonoBehaviour
         if (cubeProperty != null)
         {
             property = Instantiate(cubeProperty, transform.position, Quaternion.identity);
+            //For Feeds
+            CloseTab();
 
             closeButton = property.transform.Find("CloseButton").GetComponent<Button>();
             closeButton.onClick.AddListener(() => CloseTab());
@@ -139,12 +141,12 @@ public class CubeController : MonoBehaviour
         property.SetActive(true);
     }
 
-    private void CloseTab()
+    public void CloseTab()
     {
         property.SetActive(false);
     }
 
-    private void DeleteTab()
+    public void DeleteTab()
     {
         Destroy(property);
         Destroy(gameObject);

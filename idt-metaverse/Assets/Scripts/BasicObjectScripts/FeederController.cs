@@ -7,6 +7,7 @@ using TMPro;
 public class FeederController : MonoBehaviour
 {
     private BaseSceneController baseSceneController;
+    private BoxCollider boxCollider;
 
     public float doubleClickTimeLimit = 0.3f; 
     private float lastClickTime = -1f; 
@@ -14,7 +15,10 @@ public class FeederController : MonoBehaviour
     private GameObject property;
     private Vector3 offset;
 
+    public GameObject feedObject;
+    private bool isSpawningFeed = false;
     private float speed = 1f;
+    private Vector3 spawnPosition;
 
     #region Button Variables
 
@@ -52,12 +56,15 @@ public class FeederController : MonoBehaviour
     void Start()
     {
         baseSceneController = FindObjectOfType<BaseSceneController>();
+        boxCollider = GetComponent<BoxCollider>();
 
         GameObject feederProperty = Resources.Load<GameObject>("Feeders/" + "FeederProperty");
 
         if (feederProperty != null)
         {
             property = Instantiate(feederProperty, transform.position, Quaternion.identity);
+
+            UpdateSpawnPosition();
 
             closeButton = property.transform.Find("CloseButton").GetComponent<Button>();
             closeButton.onClick.AddListener(() => CloseTab());
@@ -122,7 +129,46 @@ public class FeederController : MonoBehaviour
 
     void Update()
     {
-        
+        //If playMode
+        if (baseSceneController.playMode && !baseSceneController.pauseMode)
+        {
+            if (!isSpawningFeed)
+            {
+                StartCoroutine(SpawnFeed());
+            }
+        }
+        //If pauseMode
+        else if (baseSceneController.playMode && baseSceneController.pauseMode) 
+        {
+            isSpawningFeed = false;
+            StopAllCoroutines();
+        }
+        else if (!baseSceneController.playMode)
+        {
+            isSpawningFeed = false;
+            StopAllCoroutines();
+
+            //Destroy All cube
+            foreach (GameObject feed in GameObject.FindGameObjectsWithTag("Feed"))
+            {
+                var feedController = feed.GetComponent<CubeController>();
+                feedController.DeleteTab();
+            }
+        }
+    }
+
+    IEnumerator SpawnFeed()
+    {
+        isSpawningFeed = true;
+
+        //Create a cube every certain time interval
+        while (baseSceneController.playMode && !baseSceneController.pauseMode)
+        {
+            Instantiate(feedObject, spawnPosition, Quaternion.identity);
+            yield return new WaitForSeconds(1f / speed);
+        }
+
+        isSpawningFeed = false;
     }
 
     #endregion
@@ -151,6 +197,11 @@ public class FeederController : MonoBehaviour
         xPosInputField.text = newPosition.x.ToString();
         yPosInputField.text = newPosition.y.ToString();
         zPosInputField.text = newPosition.z.ToString();
+    }
+
+    void OnMouseUp()
+    {
+        UpdateSpawnPosition();
     }
 
     private Vector3 GetMouseWorldPosition()
@@ -184,6 +235,13 @@ public class FeederController : MonoBehaviour
 
     #region Update Variables
 
+    private void UpdateSpawnPosition()
+    {
+        //child componenet "hole" position 으로 변경해봐라 
+        spawnPosition = transform.position + new Vector3(0f, boxCollider.size.y / 2f, 0f);
+        Debug.Log(boxCollider.size.y);
+    }
+
     private void UpdatePosition()
     {
         float xPos, yPos, zPos;
@@ -191,6 +249,8 @@ public class FeederController : MonoBehaviour
         if (float.TryParse(xPosInputField.text, out xPos) && float.TryParse(yPosInputField.text, out yPos) && float.TryParse(zPosInputField.text, out zPos))
         {
             transform.position = new Vector3(xPos, yPos, zPos);
+
+            UpdateSpawnPosition();
         }
     }
 
@@ -227,7 +287,7 @@ public class FeederController : MonoBehaviour
     //         transform.localScale = new Vector3(xScale, yScale, zScale);
     //     }
     // }
-
+    
     #endregion
 
 }

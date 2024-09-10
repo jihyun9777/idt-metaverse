@@ -407,7 +407,7 @@ public class BaseSceneController : MonoBehaviour
         {
             for (int j = 0; j < y; j++)
             {
-                Vector3 tilePosition = new Vector3(i * tileWidth, 0, j * tileHeight);
+                Vector3 tilePosition = new Vector3(i * tileWidth, -0.5f, j * tileHeight);
                 GameObject newTile = Instantiate(tile, tilePosition, Quaternion.identity);
                 newTile.transform.SetParent(floor.transform);
             }
@@ -451,7 +451,7 @@ public class BaseSceneController : MonoBehaviour
     private void UpdateTilePlacement(Vector3 mousePosition)
     {
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, new Vector3(0f, -1f, 0f)); 
+        Plane groundPlane = new Plane(Vector3.up, new Vector3(0f, -0.5f, 0f)); 
 
         //When hovered on the ground, create preview tile
         if (groundPlane.Raycast(ray, out float enter))
