@@ -145,7 +145,7 @@ public class WallController : MonoBehaviour
 
     void OnMouseUp()
     {
-        Vector3 boxSize = new Vector3(transform.localScale.x, 10f, transform.localScale.z);
+        Vector3 boxSize = new Vector3(transform.localScale.x, 0.1f, transform.localScale.z);
 
         Vector3 boxOrigin = transform.position - new Vector3(0f, transform.localScale.y / 2f, 0f);
 

@@ -7,6 +7,7 @@ using TMPro;
 public class ConveyorController : MonoBehaviour
 {
     private BaseSceneController baseSceneController;
+    private BoxCollider boxCollider;
 
     public float doubleClickTimeLimit = 0.3f; 
     private float lastClickTime = -1f; 
@@ -17,9 +18,8 @@ public class ConveyorController : MonoBehaviour
     private bool positiveDir = true;
     private float speed = 1f;
 
-    private Transform objectOnConveyor;
-    private Vector3 objectInitialPosition;
-    private bool returnToInitialPosition = false;
+    //For collision detection
+    private Vector3 boxSize;
 
     Color activeColor = new Color32(0xD1, 0xD1, 0xD1, 0xFF); 
     Color defaultColor = new Color32(0x51, 0x51, 0x51, 0xFF);
@@ -64,6 +64,9 @@ public class ConveyorController : MonoBehaviour
     void Start()
     {
         baseSceneController = FindObjectOfType<BaseSceneController>();
+        boxCollider = GetComponent<BoxCollider>();
+        boxSize = new Vector3(boxCollider.size.x, 0.1f, boxCollider.size.z);
+        Debug.Log(boxSize);
 
         GameObject conveyorProperty = Resources.Load<GameObject>("Conveyors/" + "ConveyorProperty");
 
@@ -143,37 +146,59 @@ public class ConveyorController : MonoBehaviour
         //If playMode
         if (baseSceneController.playMode && !baseSceneController.pauseMode)
         {
-            returnToInitialPosition = false;
-            float direction = positiveDir ? 1f : -1f;
+            Vector3 direction = positiveDir ? transform.right : -transform.right;
+            Vector3 boxOrigin = transform.position + new Vector3(0, boxCollider.size.y - 2f, 0);
 
-            BoxCollider boxCollider = GetComponent<BoxCollider>();
+            RaycastHit[] hits = Physics.BoxCastAll(boxOrigin, boxSize / 2, Vector3.up, Quaternion.identity, 5f);
 
-            Vector3 boxSize = new Vector3(boxCollider.size.x, 0.2f, boxCollider.size.z);
-            Vector3 boxOrigin = transform.position + new Vector3(0, boxCollider.size.y, 0);
-
-            //Detect the object on top of the conveyor
-            RaycastHit hit;
-            if (Physics.BoxCast(boxOrigin, boxSize, Vector3.up, out hit))
+            foreach (RaycastHit hit in hits)
             {
-                //Store the object and its initial position
-                if (objectOnConveyor == null)
-                {
-                    objectOnConveyor = hit.transform;
-                    objectInitialPosition = objectOnConveyor.position;
-                    Debug.Log("tlqkf");
-                }
+                Transform obj = hit.transform;
 
-                objectOnConveyor.Translate(Vector3.forward * speed * direction * Time.deltaTime);
+                //움질일 물체 여기 추가
+                if (obj.CompareTag("Feed"))
+                {
+                    Collider objCollider = obj.GetComponent<Collider>();
+                    float objectBottomY = objCollider.bounds.min.y;
+                    float conveyorTopY = transform.position.y + boxCollider.bounds.extents.y;
+
+                    //Move the object only if its entire collider is above the conveyor
+                    if (objectBottomY >= conveyorTopY)
+                    {
+                        Vector3 localPosition = transform.InverseTransformPoint(obj.position);
+                        float conveyorHalfLength = boxCollider.size.x / 2f;
+
+                        //Move the object if it hasn't reached the end of the conveyor
+                        if ((positiveDir && localPosition.x < conveyorHalfLength) || (!positiveDir && localPosition.x > -conveyorHalfLength))
+                        {
+                            obj.Translate(speed * direction * Time.deltaTime);
+                        }
+                    }
+                }
             }
         }
         //If pauseMode
-        else if (baseSceneController.playMode && baseSceneController.pauseMode) {}
-        else if (!baseSceneController.playMode && !returnToInitialPosition && objectOnConveyor != null)
-        {
+        else if (baseSceneController.pauseMode) {}
+        else if (!baseSceneController.playMode) {}
+    }
 
-            objectOnConveyor.position = objectInitialPosition;
-            returnToInitialPosition = true;
-            objectOnConveyor = null;
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+
+        Vector3 boxOrigin = transform.position + new Vector3(0, boxCollider.size.y - 2f, 0);
+        Vector3 direction = positiveDir ? transform.right : -transform.right;
+
+        RaycastHit hit;
+        if (Physics.BoxCast(boxOrigin, boxSize/2, Vector3.up, out hit, Quaternion.identity, 5f))
+        {
+            Gizmos.DrawRay(boxOrigin, Vector3.up * hit.distance);
+            Gizmos.DrawWireCube(boxOrigin + Vector3.up * hit.distance, boxSize);
+        }
+        else
+        {
+            Gizmos.DrawRay(boxOrigin, Vector3.up * 10f);
+            Gizmos.DrawWireCube(boxOrigin + Vector3.up * 10f, boxSize);
         }
     }
 
@@ -257,7 +282,10 @@ public class ConveyorController : MonoBehaviour
             transform.localScale.y * (hDim / transform.localScale.y),
             transform.localScale.z * (wDim / transform.localScale.z)
             );
+
+            boxSize = new Vector3(boxSize.x * lDim, boxSize.y, boxSize.z * wDim);
         }
+        Debug.Log(boxSize);
     }
 
     private void UpdateRotation()

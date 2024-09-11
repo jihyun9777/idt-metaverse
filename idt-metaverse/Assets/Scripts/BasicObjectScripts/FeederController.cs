@@ -8,6 +8,7 @@ public class FeederController : MonoBehaviour
 {
     private BaseSceneController baseSceneController;
     private BoxCollider boxCollider;
+    private GameObject hole;
 
     public float doubleClickTimeLimit = 0.3f; 
     private float lastClickTime = -1f; 
@@ -57,6 +58,7 @@ public class FeederController : MonoBehaviour
     {
         baseSceneController = FindObjectOfType<BaseSceneController>();
         boxCollider = GetComponent<BoxCollider>();
+        hole = transform.GetChild(1).gameObject;
 
         GameObject feederProperty = Resources.Load<GameObject>("Feeders/" + "FeederProperty");
 
@@ -138,7 +140,7 @@ public class FeederController : MonoBehaviour
             }
         }
         //If pauseMode
-        else if (baseSceneController.playMode && baseSceneController.pauseMode) 
+        else if (baseSceneController.pauseMode) 
         {
             isSpawningFeed = false;
             StopAllCoroutines();
@@ -237,9 +239,7 @@ public class FeederController : MonoBehaviour
 
     private void UpdateSpawnPosition()
     {
-        //child componenet "hole" position 으로 변경해봐라 
-        spawnPosition = transform.position + new Vector3(0f, boxCollider.size.y / 2f, 0f);
-        Debug.Log(boxCollider.size.y);
+        spawnPosition = hole.transform.position;
     }
 
     private void UpdatePosition()
