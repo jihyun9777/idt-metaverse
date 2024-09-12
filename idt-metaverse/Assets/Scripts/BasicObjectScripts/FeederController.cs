@@ -20,6 +20,10 @@ public class FeederController : MonoBehaviour
     private bool isSpawningFeed = false;
     private float speed = 1f;
     private Vector3 spawnPosition;
+    public Quaternion spawnRotation = Quaternion.identity;
+
+    //For Conveyor Connection
+    public Vector3 feederRotation = Vector3.zero;
 
     #region Button Variables
 
@@ -66,7 +70,7 @@ public class FeederController : MonoBehaviour
         {
             property = Instantiate(feederProperty, transform.position, Quaternion.identity);
 
-            UpdateSpawnPosition();
+            UpdateSpawn();
 
             closeButton = property.transform.Find("CloseButton").GetComponent<Button>();
             closeButton.onClick.AddListener(() => CloseTab());
@@ -166,7 +170,7 @@ public class FeederController : MonoBehaviour
         //Create a cube every certain time interval
         while (baseSceneController.playMode && !baseSceneController.pauseMode)
         {
-            Instantiate(feedObject, spawnPosition, Quaternion.identity);
+            Instantiate(feedObject, spawnPosition, spawnRotation);
             yield return new WaitForSeconds(1f / speed);
         }
 
@@ -203,7 +207,7 @@ public class FeederController : MonoBehaviour
 
     void OnMouseUp()
     {
-        UpdateSpawnPosition();
+        UpdateSpawn();
     }
 
     private Vector3 GetMouseWorldPosition()
@@ -237,9 +241,13 @@ public class FeederController : MonoBehaviour
 
     #region Update Variables
 
-    private void UpdateSpawnPosition()
+    private void UpdateSpawn()
     {
-        spawnPosition = hole.transform.position;
+        Vector3 holePosition = hole.transform.position;
+
+        spawnRotation = Quaternion.Euler(feederRotation);
+
+        spawnPosition = holePosition;
     }
 
     private void UpdatePosition()
@@ -250,7 +258,7 @@ public class FeederController : MonoBehaviour
         {
             transform.position = new Vector3(xPos, yPos, zPos);
 
-            UpdateSpawnPosition();
+            UpdateSpawn();
         }
     }
 
@@ -275,6 +283,9 @@ public class FeederController : MonoBehaviour
         if (float.TryParse(xRotInputField.text, out xRot) && float.TryParse(yRotInputField.text, out yRot) && float.TryParse(zRotInputField.text, out zRot))
         {
             transform.rotation = Quaternion.Euler(xRot, yRot, zRot);
+            feederRotation = new Vector3(xRot, yRot, zRot);
+
+            UpdateSpawn();
         }
     }
 

@@ -54,6 +54,10 @@ public class BaseSceneController : MonoBehaviour
     private bool feederTabOpen = false;
     public GameObject feederTab;
 
+    //Human Button
+    private bool humanTabOpen = false;
+    public GameObject humanTab;
+
     #endregion
     #region Tile Variables
 
@@ -296,6 +300,9 @@ public class BaseSceneController : MonoBehaviour
 
         feederTabOpen = false;
         feederTab.SetActive(false);
+
+        humanTabOpen = false;
+        humanTab.SetActive(false);
     }
 
     #endregion
@@ -343,7 +350,7 @@ public class BaseSceneController : MonoBehaviour
         conveyorTab.SetActive(conveyorTabOpen);
     }
 
-    //When ConveyorButton is Clicked
+    //When FeederButton is Clicked
     public void ToggleFeederTab()
     {
         if (!feederTabOpen)
@@ -351,6 +358,16 @@ public class BaseSceneController : MonoBehaviour
 
         feederTabOpen = !feederTabOpen;
         feederTab.SetActive(feederTabOpen);
+    }
+
+    //When HumanButton is Clicked
+    public void ToggleHumanTab()
+    {
+        if (!humanTabOpen)
+            DeactivateAllButtonTab();
+
+        humanTabOpen = !humanTabOpen;
+        humanTab.SetActive(humanTabOpen);
     }
 
     //Instantiate Basic Object

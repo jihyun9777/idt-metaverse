@@ -18,11 +18,17 @@ public class ConveyorController : MonoBehaviour
     private bool positiveDir = true;
     private float speed = 1f;
 
-    //For collision detection
-    private Vector3 boxSize;
-
     Color activeColor = new Color32(0xD1, 0xD1, 0xD1, 0xFF); 
     Color defaultColor = new Color32(0x51, 0x51, 0x51, 0xFF);
+
+    //For collision detection with Feed
+    private Vector3 boxSize;
+
+    //For connection with Feeder
+    LineRenderer lineRenderer;
+    private GameObject closestHole = null;
+    private float distanceToClosestHole = float.MaxValue;
+
 
     #region Button Variables
 
@@ -66,8 +72,18 @@ public class ConveyorController : MonoBehaviour
         baseSceneController = FindObjectOfType<BaseSceneController>();
         boxCollider = GetComponent<BoxCollider>();
         boxSize = new Vector3(boxCollider.size.x, 0.1f, boxCollider.size.z);
-        Debug.Log(boxSize);
 
+        //Feeder Connection Start
+        lineRenderer = gameObject.AddComponent<LineRenderer>();
+
+        lineRenderer.startWidth = 3f;
+        lineRenderer.endWidth = 3f;
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.startColor = Color.green;
+        lineRenderer.endColor = Color.green;
+        lineRenderer.positionCount = 0; //Start with no points
+
+        //Tab Start
         GameObject conveyorProperty = Resources.Load<GameObject>("Conveyors/" + "ConveyorProperty");
 
         if (conveyorProperty != null)
@@ -228,6 +244,37 @@ public class ConveyorController : MonoBehaviour
         xPosInputField.text = newPosition.x.ToString();
         yPosInputField.text = newPosition.y.ToString();
         zPosInputField.text = newPosition.z.ToString();
+
+        //Draw green ray from hole's bottom to conveyor
+        GameObject[] holes = GameObject.FindGameObjectsWithTag("Hole");
+        lineRenderer.positionCount = 0;
+        distanceToClosestHole = float.MaxValue;
+
+        foreach (GameObject hole in holes)
+        {
+            Vector3 holePosition = hole.transform.position;
+
+            Vector3 holeBottomFront = holePosition - new Vector3(0, hole.GetComponent<Collider>().bounds.extents.y, 0);
+            Vector3 conveyorTopRight = transform.position + transform.right * boxCollider.bounds.extents.x + new Vector3(0, boxCollider.size.y, 0);
+            Vector3 conveyorTopLeft = transform.position - transform.right * boxCollider.bounds.extents.x + new Vector3(0, boxCollider.size.y, 0);
+
+            float distanceToRight = Vector3.Distance(holeBottomFront, conveyorTopRight);
+            float distanceToLeft = Vector3.Distance(holeBottomFront, conveyorTopLeft);
+
+            //Choose the closest side
+            Vector3 closestTop = distanceToLeft < distanceToRight ? conveyorTopLeft : conveyorTopRight;
+            float distance = Vector3.Distance(closestTop, holeBottomFront);
+
+            if (distance <= 50f && distance < distanceToClosestHole)
+            {
+                closestHole  = hole;
+                distanceToClosestHole = distance;
+
+                lineRenderer.positionCount = 2;
+                lineRenderer.SetPosition(0, holeBottomFront);
+                lineRenderer.SetPosition(1, closestTop);
+            }
+        }
     }
 
     private Vector3 GetMouseWorldPosition()
@@ -235,6 +282,53 @@ public class ConveyorController : MonoBehaviour
         Vector3 mouseScreenPosition = Input.mousePosition;
         mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
         return Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+    }
+
+    void OnMouseUp()
+    {
+        if (distanceToClosestHole <= 50f)
+        {
+            FeederController feederController = closestHole.transform.parent.GetComponent<FeederController>();
+            Vector3 feederRotation = feederController.feederRotation;
+
+            //Adjust conveyor position and rotation to match the feeder
+            transform.rotation = Quaternion.Euler(feederRotation);
+
+            //Calculate the bottom front position of the Hole
+            Collider holeCollider = closestHole.GetComponent<Collider>();
+            Vector3 holeBottom = closestHole.transform.position - (closestHole.transform.up * holeCollider.bounds.extents.y);
+
+            //Calculate the new position for the conveyor to align it without overlapping
+            Vector3 conveyorOffset = (transform.right * boxCollider.bounds.extents.x - new Vector3(0, boxCollider.size.y, 0));
+            Vector3 newPosition;
+
+            //If the right side was closer to the hole
+            if (Vector3.Dot(transform.right, closestHole.transform.forward) > 0)
+            {
+                transform.Rotate(0, 180, 0);
+                newPosition = holeBottom - conveyorOffset;
+            }
+            //If the left side was closer to the hole
+            else
+            {
+                newPosition = holeBottom + conveyorOffset;
+            }
+
+            transform.position = newPosition;
+
+            //Update the input fields with the new position
+            xPosInputField.text = newPosition.x.ToString();
+            yPosInputField.text = newPosition.y.ToString();
+            zPosInputField.text = newPosition.z.ToString();
+
+            //Update the rotation input fields with the new rotation values
+            Vector3 rotation = transform.rotation.eulerAngles;
+            xRotInputField.text = rotation.x.ToString();
+            yRotInputField.text = rotation.y.ToString();
+            zRotInputField.text = rotation.z.ToString();
+
+            lineRenderer.positionCount = 0;
+        }
     }
 
     #endregion

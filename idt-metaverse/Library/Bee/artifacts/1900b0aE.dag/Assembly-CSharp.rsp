@@ -402,6 +402,7 @@
 "Assets/Scripts/BasicObjectScripts/CubeController.cs"
 "Assets/Scripts/BasicObjectScripts/CylinderController.cs"
 "Assets/Scripts/BasicObjectScripts/FeederController.cs"
+"Assets/Scripts/BasicObjectScripts/HumanController.cs"
 "Assets/Scripts/BasicObjectScripts/PlaneController.cs"
 "Assets/Scripts/BasicObjectScripts/WallController.cs"
 "Assets/Scripts/CameraSystem.cs"
