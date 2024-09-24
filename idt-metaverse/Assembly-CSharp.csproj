@@ -84,6 +84,7 @@
     <Compile Include="Assets\Scripts\BasicObjectScripts\HumanController.cs" />
     <Compile Include="Assets\Scripts\MainSceneScripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\BaseSceneController.cs" />
+    <Compile Include="Assets\DownloadAssets\Kevin Iglesias\Basic Motions\_ExampleScene\Scripts\RootmotionReset.cs" />
     <Compile Include="Assets\Scripts\MainSceneScripts\TileController.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
@@ -124,6 +125,8 @@
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
     <Compile Include="Assets\Scripts\AssetController.cs" />
     <Compile Include="Assets\Scripts\MainSceneScripts\TileState.cs" />
+    <Compile Include="Assets\DownloadAssets\Kevin Iglesias\Basic Motions\_ExampleScene\Scripts\RPMaterialLoader.cs" />
+    <Compile Include="Assets\Scripts\BasicObjectScripts\RobotController.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
   </ItemGroup>
   <ItemGroup>

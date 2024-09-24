@@ -52,6 +52,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Human1
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 4ab57c4a98164c44cb29b6586ed44a41, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 69bd73834e6a0e9448a821cb1e8e0fb2, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 4ab57c4a98164c44cb29b6586ed44a41, type: 3}
+      propertyPath: m_UpdateMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 4ab57c4a98164c44cb29b6586ed44a41, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 4ab57c4a98164c44cb29b6586ed44a41, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -77,3 +93,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0082d2f168f668840b29e92b7224a5f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  doubleClickTimeLimit: 0.3

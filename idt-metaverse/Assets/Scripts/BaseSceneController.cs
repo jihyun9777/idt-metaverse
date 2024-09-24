@@ -58,6 +58,10 @@ public class BaseSceneController : MonoBehaviour
     private bool humanTabOpen = false;
     public GameObject humanTab;
 
+    //Robot Button
+    private bool robotTabOpen = false;
+    public GameObject robotTab;
+
     #endregion
     #region Tile Variables
 
@@ -303,6 +307,9 @@ public class BaseSceneController : MonoBehaviour
 
         humanTabOpen = false;
         humanTab.SetActive(false);
+
+        robotTabOpen = false;
+        robotTab.SetActive(false);
     }
 
     #endregion
@@ -368,6 +375,16 @@ public class BaseSceneController : MonoBehaviour
 
         humanTabOpen = !humanTabOpen;
         humanTab.SetActive(humanTabOpen);
+    }
+
+    //When RobotButton is Clicked
+    public void ToggleRobotTab()
+    {
+        if (!robotTabOpen)
+            DeactivateAllButtonTab();
+
+        robotTabOpen = !robotTabOpen;
+        robotTab.SetActive(robotTabOpen);
     }
 
     //Instantiate Basic Object

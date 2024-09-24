@@ -430,6 +430,4 @@ public class ConveyorController : MonoBehaviour
     }
 
     #endregion
-
-
 }

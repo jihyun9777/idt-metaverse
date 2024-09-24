@@ -164,7 +164,6 @@ public class WallController : MonoBehaviour
                 xPosInputField.text = roundedX.ToString();
                 yPosInputField.text = "0";
                 zPosInputField.text = roundedZ.ToString();
-                Debug.Log("here");
             }
         }
     }
