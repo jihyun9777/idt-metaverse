@@ -124,8 +124,8 @@
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
     <Compile Include="Assets\Scripts\AssetController.cs" />
-    <Compile Include="Assets\Scripts\MainSceneScripts\TileState.cs" />
     <Compile Include="Assets\DownloadAssets\Kevin Iglesias\Basic Motions\_ExampleScene\Scripts\RPMaterialLoader.cs" />
+    <Compile Include="Assets\Scripts\MainSceneScripts\TileState.cs" />
     <Compile Include="Assets\Scripts\BasicObjectScripts\RobotController.cs" />
     <Compile Include="Assets\DownloadAssets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
   </ItemGroup>

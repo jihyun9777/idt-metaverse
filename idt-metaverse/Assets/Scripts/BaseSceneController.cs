@@ -286,7 +286,7 @@ public class BaseSceneController : MonoBehaviour
         Vector3 topRight = worldCorners[2];
         return new Rect(bottomLeft.x, bottomLeft.y, topRight.x - bottomLeft.x, topRight.y - bottomLeft.y);
     }
-
+    
     //Close all button tab
     public void DeactivateAllButtonTab()
     {
@@ -295,7 +295,7 @@ public class BaseSceneController : MonoBehaviour
 
         basicObjectTabOpen = false;
         basicObjectTab.SetActive(false);
-
+        
         storageTabOpen = false;
         storageTab.SetActive(false);
 
@@ -311,7 +311,7 @@ public class BaseSceneController : MonoBehaviour
         robotTabOpen = false;
         robotTab.SetActive(false);
     }
-
+    
     #endregion
 
     #region Button Controller
@@ -419,7 +419,7 @@ public class BaseSceneController : MonoBehaviour
             {
                 combinedBounds.Encapsulate(renderer.bounds);
             }
-
+            
             //Create BoxCollider
             BoxCollider boxCollider = instantiatedObject.AddComponent<BoxCollider>();
             boxCollider.center = combinedBounds.center - instantiatedObject.transform.position;
@@ -427,7 +427,7 @@ public class BaseSceneController : MonoBehaviour
         }
         else    Debug.LogError("Object not found: " + name);
     }
-
+    
     #endregion
 
     #region Create Floor

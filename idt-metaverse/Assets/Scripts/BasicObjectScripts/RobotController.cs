@@ -13,8 +13,15 @@ public class RobotController : MonoBehaviour
 
     private GameObject property;
     private Vector3 offset;
-    private float speed = 1f;
 
+    private GameObject drawnCircle;
+    private float circleRadius = 200f;
+    private List<Quaternion> initialChildRotations = new List<Quaternion>();
+    private Vector3 axis;
+
+    private Vector3 targetPosition;
+    private float speed = 1f;
+    
     #region Button Variables
 
     private Button closeButton;
@@ -43,6 +50,14 @@ public class RobotController : MonoBehaviour
     private Button positiveButton;
     private Button negativeButton;
 
+    //Pick up
+    private Toggle pickToggle;
+
+    //Place
+    private TMP_InputField xPlaceInputField;
+    private TMP_InputField yPlaceInputField;
+    private TMP_InputField zPlaceInputField;
+
     //Speed
     private TMP_InputField speedInputField;
 
@@ -55,6 +70,14 @@ public class RobotController : MonoBehaviour
     void Start()
     {
         baseSceneController = FindObjectOfType<BaseSceneController>();
+
+        axis = transform.TransformDirection(Vector3.forward);
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            initialChildRotations.Add(child.rotation);
+        }
 
         //Tab Start
         GameObject robotProperty = Resources.Load<GameObject>("Robots/" + "RobotProperty");
@@ -110,6 +133,18 @@ public class RobotController : MonoBehaviour
             // yScaleInputField.onEndEdit.AddListener(delegate { UpdateScale(); });
             // zScaleInputField.onEndEdit.AddListener(delegate { UpdateScale(); });  
 
+            //Pick up
+            pickToggle = property.transform.Find("PickUp/Toggle").GetComponent<Toggle>();
+            pickToggle.onValueChanged.AddListener(OnPickToggleChanged);
+
+            //Place Inputs 
+            xRotInputField = property.transform.Find("Place/XPlaceInputField").GetComponent<TMP_InputField>();
+            yRotInputField = property.transform.Find("Place/YPlaceInputField").GetComponent<TMP_InputField>();
+            zRotInputField = property.transform.Find("Place/ZPlaceInputField").GetComponent<TMP_InputField>();
+            xRotInputField.onEndEdit.AddListener(text => float.TryParse(text, out targetPosition.x));
+            yRotInputField.onEndEdit.AddListener(text => float.TryParse(text, out targetPosition.y));
+            zRotInputField.onEndEdit.AddListener(text => float.TryParse(text, out targetPosition.z));
+
             //Speed Inputs
             speedInputField = property.transform.Find("Speed/SpeedInputField").GetComponent<TMP_InputField>();
             speedInputField.text = "1";
@@ -120,7 +155,7 @@ public class RobotController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Prefab 'conveyorProperty' not found in Resources folder.");
+            Debug.LogError("Prefab 'robotProperty' not found in Resources folder.");
         }
     }
 
@@ -129,12 +164,130 @@ public class RobotController : MonoBehaviour
         //If playMode
         if (baseSceneController.playMode && !baseSceneController.pauseMode)
         {
-            
+            //Check if there is Feed in PickUp Boundary
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, circleRadius);
+            Transform closestFeedObject = null;
+            float closestDistance = Mathf.Infinity;
+
+            //Find closest Feed
+            foreach (Collider hitCollider in hitColliders)
+            {
+                if (hitCollider.CompareTag("Feed"))
+                {
+                    float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestFeedObject = hitCollider.transform;
+                    }
+                }
+            }
+
+            bool isM21Rotating = false;
+            bool isM33Rotating = false;
+            Quaternion targetRotation = Quaternion.identity;
+
+            if (closestFeedObject != null)
+            {
+                //M12 rotation
+                for (int i = 11; i < transform.childCount; i++)  
+                {
+                    Transform child = transform.GetChild(i);
+
+                    Vector3 directionToFeed = closestFeedObject.position - child.position;
+                    //y-axis rotation
+                    directionToFeed.y = 0;
+
+                    targetRotation = Quaternion.LookRotation(directionToFeed);
+                    targetRotation *= Quaternion.Euler(0, 90, 0);
+
+                    //Calculate the angle difference
+                    float angleDifference = Quaternion.Angle(child.rotation, targetRotation);
+
+                    //If the angle difference is greater than 180 degrees, invert the target rotation
+                    if (angleDifference > 180f)
+                    {
+                        targetRotation = Quaternion.Euler(targetRotation.eulerAngles.x, targetRotation.eulerAngles.y + 180f, targetRotation.eulerAngles.z);
+                    }
+
+                    child.rotation = Quaternion.Slerp(child.rotation, targetRotation, Time.deltaTime * speed);
+                }
+
+                //Check if M12 rotation is finished
+                if (Quaternion.Angle(transform.GetChild(11).rotation, targetRotation) < 1f)
+                {
+                    axis = targetRotation * Vector3.forward;
+                    isM21Rotating = true;
+                }
+
+                //M33 rotation
+                if (isM21Rotating)
+                {
+                    for (int i = 32; i < transform.childCount; i++)
+                    {
+                        Transform child = transform.GetChild(i);
+                        Vector3 directionToFeed = closestFeedObject.position - child.position;
+
+                        // Calculate the target angle based on height
+                        float targetAngle = Mathf.Atan2(directionToFeed.y, directionToFeed.x) * Mathf.Rad2Deg;
+
+                        // Create the rotation for the upper arm
+                        targetRotation = Quaternion.AngleAxis(targetAngle, axis) * Quaternion.Euler(0, 0, 0);
+
+                        // Smoothly rotate the upper arm
+                        child.rotation = Quaternion.Slerp(child.rotation, targetRotation, Time.deltaTime * speed);
+                    }
+
+                    //Check if M33 rotation is finished
+                    if (Quaternion.Angle(transform.GetChild(20).rotation, targetRotation) < 1f)
+                    {
+                        isM33Rotating = true;
+                    }
+                }
+
+                //M21 rotation
+                if (isM33Rotating)
+                {
+                    for (int i = 20; i < transform.childCount; i++)
+                    {
+                        Transform child = transform.GetChild(i);
+                        Vector3 directionToFeed = closestFeedObject.position - child.position;
+                        
+                        // Calculate the target angle based on height
+                        float targetAngle = Mathf.Atan2(directionToFeed.y, directionToFeed.x) * Mathf.Rad2Deg;
+                        
+                        // Create the rotation for the lower arm
+                        targetRotation = Quaternion.Euler(targetAngle, 0, 0);
+                        
+                        // Smoothly rotate the lower arm
+                        child.rotation = Quaternion.Slerp(child.rotation, targetRotation, Time.deltaTime * speed);
+                    }
+
+                    //Check if M21 rotation is finished
+                    if (Quaternion.Angle(transform.GetChild(32).rotation, targetRotation) < 1f)
+                    {
+                        isM33Rotating = false;
+                    }
+                }
+            }
         }
         //If pauseMode
         else if (baseSceneController.pauseMode) {}
         //If not playMode
-        else if (!baseSceneController.playMode) {}
+        else if (!baseSceneController.playMode) 
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                Transform child = transform.GetChild(i);
+                child.rotation = initialChildRotations[0];
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(transform.position, axis * 200f);
     }
 
     #endregion
@@ -164,6 +317,10 @@ public class RobotController : MonoBehaviour
         yPosInputField.text = newPosition.y.ToString();
         zPosInputField.text = newPosition.z.ToString();
 
+        if (drawnCircle != null)
+        {
+            drawnCircle.transform.position = newPosition;  
+        }
     }
 
     private Vector3 GetMouseWorldPosition()
@@ -204,6 +361,11 @@ public class RobotController : MonoBehaviour
         if (float.TryParse(xPosInputField.text, out xPos) && float.TryParse(yPosInputField.text, out yPos) && float.TryParse(zPosInputField.text, out zPos))
         {
             transform.position = new Vector3(xPos, yPos, zPos);
+
+            if (drawnCircle != null)
+            {
+                drawnCircle.transform.position = transform.position; 
+            }
         }
     }
 
@@ -240,6 +402,60 @@ public class RobotController : MonoBehaviour
     //         transform.localScale = new Vector3(xScale, yScale, zScale);
     //     }
     // }
+
+    void OnPickToggleChanged(bool isOn)
+    {
+        if (isOn)
+        {
+            if (drawnCircle == null)
+            {
+                drawnCircle = new GameObject("DrawnCircle");
+                MeshFilter meshFilter = drawnCircle.AddComponent<MeshFilter>();
+                MeshRenderer meshRenderer = drawnCircle.AddComponent<MeshRenderer>();
+
+                Material material = new Material(Shader.Find("Sprites/Default"));
+                material.color = Color.green; 
+                meshRenderer.material = material;
+
+                Mesh mesh = new Mesh();
+                meshFilter.mesh = mesh;
+
+                int segments = 50;
+
+                Vector3[] vertices = new Vector3[segments + 1];
+                int[] triangles = new int[segments * 3];
+
+                vertices[0] = Vector3.zero;
+
+                for (int i = 0; i < segments; i++)
+                {
+                    float angle = (i * Mathf.PI * 2f) / segments;
+                    float x = Mathf.Cos(angle) * circleRadius;
+                    float z = Mathf.Sin(angle) * circleRadius;
+                    vertices[i + 1] = new Vector3(x, 0, z);
+                }
+
+                for (int i = 0; i < segments - 1; i++)
+                {
+                    triangles[i * 3] = 0;
+                    triangles[i * 3 + 1] = i + 1;
+                    triangles[i * 3 + 2] = i + 2;
+                }
+
+                triangles[(segments - 1) * 3] = 0;
+                triangles[(segments - 1) * 3 + 1] = segments;
+                triangles[(segments - 1) * 3 + 2] = 1;
+
+                mesh.vertices = vertices;
+                mesh.triangles = triangles;
+                mesh.RecalculateNormals();
+            }
+        }
+        else
+        {
+            Destroy(drawnCircle);
+        }
+    }
 
     #endregion
 
