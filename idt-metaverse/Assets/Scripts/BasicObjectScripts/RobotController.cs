@@ -221,54 +221,48 @@ public class RobotController : MonoBehaviour
                 }
 
                 //M33 rotation
-                if (isM21Rotating)
-                {
-                    for (int i = 32; i < transform.childCount; i++)
-                    {
-                        Transform child = transform.GetChild(i);
-                        Vector3 directionToFeed = closestFeedObject.position - child.position;
+                // if (isM21Rotating)
+                // {
+                //     Transform m35 = transform.Find("M35");
 
-                        // Calculate the target angle based on height
-                        float targetAngle = Mathf.Atan2(directionToFeed.y, directionToFeed.x) * Mathf.Rad2Deg;
-
-                        // Create the rotation for the upper arm
-                        targetRotation = Quaternion.AngleAxis(targetAngle, axis) * Quaternion.Euler(0, 0, 0);
-
-                        // Smoothly rotate the upper arm
-                        child.rotation = Quaternion.Slerp(child.rotation, targetRotation, Time.deltaTime * speed);
-                    }
-
-                    //Check if M33 rotation is finished
-                    if (Quaternion.Angle(transform.GetChild(20).rotation, targetRotation) < 1f)
-                    {
-                        isM33Rotating = true;
-                    }
-                }
-
-                //M21 rotation
-                if (isM33Rotating)
-                {
-                    for (int i = 20; i < transform.childCount; i++)
-                    {
-                        Transform child = transform.GetChild(i);
-                        Vector3 directionToFeed = closestFeedObject.position - child.position;
+                //     for (int i = 32; i < transform.childCount; i++)
+                //     {
+                //         Transform child = transform.GetChild(i);
                         
-                        // Calculate the target angle based on height
-                        float targetAngle = Mathf.Atan2(directionToFeed.y, directionToFeed.x) * Mathf.Rad2Deg;
-                        
-                        // Create the rotation for the lower arm
-                        targetRotation = Quaternion.Euler(targetAngle, 0, 0);
-                        
-                        // Smoothly rotate the lower arm
-                        child.rotation = Quaternion.Slerp(child.rotation, targetRotation, Time.deltaTime * speed);
-                    }
+                //         child.RotateAround(m35.position, Vector3.forward, 45f * Time.deltaTime);
+                //     }
 
-                    //Check if M21 rotation is finished
-                    if (Quaternion.Angle(transform.GetChild(32).rotation, targetRotation) < 1f)
-                    {
-                        isM33Rotating = false;
-                    }
-                }
+                //     //Check if M33 rotation is finished
+                //     if (Quaternion.Angle(transform.GetChild(32).rotation, targetRotation) < 1f)
+                //     {
+                //         isM33Rotating = true;
+                //     }
+                // }
+
+                // //M21 rotation
+                // if (isM33Rotating)
+                // {
+                //     for (int i = 20; i < transform.childCount; i++)
+                //     {
+                //         Transform child = transform.GetChild(i);
+                //         Vector3 directionToFeed = closestFeedObject.position - child.position;
+                        
+                //         // Calculate the target angle based on height
+                //         float targetAngle = Mathf.Atan2(directionToFeed.y, directionToFeed.x) * Mathf.Rad2Deg;
+                        
+                //         // Create the rotation for the lower arm
+                //         targetRotation = Quaternion.Euler(targetAngle, 0, 0);
+                        
+                //         // Smoothly rotate the lower arm
+                //         child.rotation = Quaternion.Slerp(child.rotation, targetRotation, Time.deltaTime * speed);
+                //     }
+
+                //     //Check if M21 rotation is finished
+                //     if (Quaternion.Angle(transform.GetChild(32).rotation, targetRotation) < 1f)
+                //     {
+                //         isM33Rotating = false;
+                //     }
+                // }
             }
         }
         //If pauseMode
@@ -449,6 +443,8 @@ public class RobotController : MonoBehaviour
                 mesh.vertices = vertices;
                 mesh.triangles = triangles;
                 mesh.RecalculateNormals();
+
+                drawnCircle.transform.position = transform.position;
             }
         }
         else
