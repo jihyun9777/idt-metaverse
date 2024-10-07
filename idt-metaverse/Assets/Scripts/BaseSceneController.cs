@@ -402,6 +402,7 @@ public class BaseSceneController : MonoBehaviour
                 Vector3 adjustedPosition = new Vector3(0, renderer.bounds.extents.y, 0);
                 instantiatedObject.transform.position = adjustedPosition;
             }
+
         }
         else    Debug.LogError("Basic Object not found: " + name);
     }

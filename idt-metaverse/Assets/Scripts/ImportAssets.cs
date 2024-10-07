@@ -48,7 +48,7 @@ public class ImportAssets : MonoBehaviour
         for (int i = 0; i < assets.Count; i++)
         {
             var asset = assets[i];
-
+            Debug.Log("Hey");
             string modelUrl = networkingScript.ConstructDownloadUrl(asset.submodels[2].keys[0].value);
 
             //StartCoroutine(DownloadAndExportModel(asset.idShort, modelUrl));
@@ -129,5 +129,4 @@ public class ImportAssets : MonoBehaviour
 
         LoadBaseScene();
     }
-
 }
