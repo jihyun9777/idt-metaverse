@@ -151,7 +151,7 @@ public class BaseSceneController : MonoBehaviour
     
         #region Asset Start
 
-        CreateAssetList();
+        //CreateAssetList();
 
         #endregion
     }
@@ -684,6 +684,7 @@ public class BaseSceneController : MonoBehaviour
         //Update the asset position in the database
         dBAccess.SetAssetLocation(assetId, newPosition.x, newPosition.z);
     }
+    
 
     #endregion
 
